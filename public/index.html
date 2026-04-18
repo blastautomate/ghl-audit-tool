@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GHL Audit Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f9;color:#1a1a2e;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:99}
+.logo{width:38px;height:38px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.topbar-text h1{font-size:16px;font-weight:700;color:#1a1a2e}
+.topbar-text p{font-size:12px;color:#64748b}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px}
+
+/* ── Input Card ── */
+.card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:28px;margin-bottom:20px}
+.card h2{font-size:15px;font-weight:700;margin-bottom:4px;color:#1a1a2e}
+.sub{font-size:13px;color:#64748b;margin-bottom:20px}
+.note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:12px;color:#1d4ed8;margin-bottom:18px;line-height:1.8}
+.note b{font-weight:700}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:14px;background:#fafbfc;outline:none;transition:border-color .15s;color:#1a1a2e}
+.field input:focus{border-color:#667eea;background:#fff}
+.field .hint{font-size:11px;color:#94a3b8;margin-top:5px}
+.btn-run{width:100%;padding:13px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.btn-run:hover{opacity:.88}
+.btn-run:disabled{opacity:.45;cursor:not-allowed}
+.err{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;font-size:13px;color:#dc2626;margin-bottom:14px;display:none}
+
+/* ── Loading ── */
+.prog-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:40px 24px;margin-bottom:20px;display:none;text-align:center}
+.spinner{width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#667eea;border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prog-lbl{font-size:15px;font-weight:700;margin-bottom:5px;color:#1a1a2e}
+.prog-sub{font-size:12px;color:#94a3b8}
+
+/* ── Results ── */
+.results{display:none}
+.top-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.back-btn{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;color:#475569;transition:background .15s}
+.back-btn:hover{background:#f8fafc}
+.pdf-btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:9px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s}
+.pdf-btn:hover{opacity:.88}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Banner ── */
+.banner{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:5px solid}
+.ring.g{border-color:#22c55e;background:#f0fdf4;color:#16a34a}
+.ring.y{border-color:#f59e0b;background:#fffbeb;color:#d97706}
+.ring.r{border-color:#ef4444;background:#fef2f2;color:#dc2626}
+.rnum{font-size:26px;font-weight:800;line-height:1}
+.rlbl{font-size:10px;color:#94a3b8;margin-top:2px;font-weight:600}
+.binfo{flex:1;min-width:200px}
+.binfo h2{font-size:18px;font-weight:800;margin-bottom:4px;color:#1a1a2e}
+.binfo p{font-size:13px;color:#64748b;margin-bottom:10px}
+.meta-row{display:flex;gap:16px;flex-wrap:wrap}
+.mc{font-size:12px;color:#64748b}
+.mc b{color:#1a1a2e;font-weight:700}
+.audit-date{font-size:11px;color:#94a3b8;margin-top:8px}
+
+/* ── Section Grid ── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:580px){.grid{grid-template-columns:1fr}}
+.sc{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:18px}
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.si{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sn{font-size:13px;font-weight:700;flex:1;color:#1a1a2e}
+.pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+.pill.pass{background:#dcfce7;color:#16a34a}
+.pill.warn{background:#fef9c3;color:#a16207}
+.pill.fail{background:#fee2e2;color:#dc2626}
+.cl{list-style:none}
+.cl li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;padding:5px 0;border-bottom:1px solid #f8fafc;color:#475569;line-height:1.45}
+.cl li:last-child{border-bottom:none}
+.dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:1px}
+.dot.ok{background:#dcfce7;color:#16a34a}
+.dot.warn{background:#fef9c3;color:#a16207}
+.dot.fail{background:#fee2e2;color:#dc2626}
+.sf{display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-top:10px;padding-top:9px;border-top:1px solid #f1f5f9}
+.sf b{color:#1a1a2e;font-weight:700}
+
+/* ── Recommendations ── */
+.rec-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:22px;margin-bottom:20px}
+.rec-card h3{font-size:14px;font-weight:700;margin-bottom:14px;color:#1a1a2e}
+.rec-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9}
+.rec-item:last-child{border-bottom:none}
+.rec-num{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rec-text{font-size:12.5px;color:#475569;line-height:1.55}
+.rec-text b{color:#1a1a2e;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">GHL</div>
+  <div class="topbar-text">
+    <h1>Sub-Account Audit Tool</h1>
+    <p>Complete health check for GoHighLevel locations</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ── Input Screen ── -->
+  <div class="card" id="inputScreen">
+    <h2>Connect Your GHL Sub-Account</h2>
+    <p class="sub">Enter your credentials. All API calls are made securely from the server — your token is never stored.</p>
+    <div class="note">
+      <b>Required token scopes:</b><br>
+      contacts.readonly &nbsp;·&nbsp; opportunities.readonly &nbsp;·&nbsp; funnels.readonly &nbsp;·&nbsp;
+      workflows.readonly &nbsp;·&nbsp; calendars.readonly &nbsp;·&nbsp; forms.readonly &nbsp;·&nbsp;
+      locations.readonly &nbsp;·&nbsp; custom-values.readonly
+    </div>
+    <div class="err" id="errBox"></div>
+    <div class="field">
+      <label>Private Integration Token</label>
+      <input type="password" id="apiKey" placeholder="pit-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off"/>
+      <div class="hint">Sub-Account Settings → Private Integrations → Create & copy your token</div>
+    </div>
+    <div class="field">
+      <label>Location ID</label>
+      <input type="text" id="locId" placeholder="e.g. ve9EPM428h8vShlRW1KT" autocomplete="off"/>
+      <div class="hint">Sub-Account Settings → Business Profile → Location ID</div>
+    </div>
+    <button class="btn-run" id="runBtn" onclick="startAudit()">Run Full Audit</button>
+  </div>
+
+  <!-- ── Loading Screen ── -->
+  <div class="prog-card" id="progCard">
+    <div class="spinner"></div>
+    <div class="prog-lbl">Running full audit...</div>
+    <div class="prog-sub">Fetching all 9 sections from GHL API — this takes about 10–20 seconds</div>
+  </div>
+
+  <!-- ── Results Screen ── -->
+  <div class="results" id="resultsScreen">
+
+    <div class="top-actions">
+      <button class="back-btn" onclick="resetApp()">← New Audit</button>
+      <button class="pdf-btn" onclick="exportPDF()">
+        <svg viewBox="0 0 24 24"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M4 20h16" stroke-linecap="round"/></svg>
+        Download PDF Report
+      </button>
+    </div>
+
+    <!-- Score Banner -->
+    <div class="banner">
+      <div class="ring" id="ring">
+        <span class="rnum" id="rnum">--</span>
+        <span class="rlbl">/ 100</span>
+      </div>
+      <div class="binfo">
+        <h2 id="rtitle">--</h2>
+        <p id="rdesc">--</p>
+        <div class="meta-row">
+          <span class="mc">Contacts: <b id="mC">--</b></span>
+          <span class="mc">Pipelines: <b id="mP">--</b></span>
+          <span class="mc">Workflows: <b id="mW">--</b></span>
+          <span class="mc">Calendars: <b id="mCal">--</b></span>
+          <span class="mc">Forms: <b id="mF">--</b></span>
+        </div>
+        <div class="audit-date" id="auditDate"></div>
+      </div>
+    </div>
+
+    <!-- Section Cards -->
+    <div class="grid" id="secGrid"></div>
+
+    <!-- Recommendations -->
+    <div class="rec-card">
+      <h3>Recommendations</h3>
+      <div id="recList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────
+let auditSections = [];
+let auditMeta     = {};
+
+// ─── Start Audit ──────────────────────────────────────────────
+async function startAudit() {
+  const token  = document.getElementById('apiKey').value.trim();
+  const locId  = document.getElementById('locId').value.trim();
+  const errBox = document.getElementById('errBox');
+  errBox.style.display = 'none';
+
+  if (!token || !locId) {
+    errBox.textContent = 'Please fill in both the token and Location ID.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('inputScreen').style.display = 'none';
+  document.getElementById('progCard').style.display    = 'block';
+
+  try {
+    const res = await fetch('/api/audit', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token, locationId: locId }),
+    });
+    if (!res.ok) throw new Error(`Server returned ${res.status}`);
+    const data = await res.json();
+    renderResults(data);
+  } catch (e) {
+    document.getElementById('progCard').style.display    = 'none';
+    document.getElementById('inputScreen').style.display = 'block';
+    document.getElementById('runBtn').disabled = false;
+    errBox.textContent = 'Error: ' + e.message;
+    errBox.style.display = 'block';
+  }
+}
+
+// ─── Render Results ───────────────────────────────────────────
+function renderResults(D) {
+  document.getElementById('progCard').style.display    = 'none';
+  document.getElementById('resultsScreen').style.display = 'block';
+
+  auditSections = buildSections(D);
+  const avg = Math.round(auditSections.reduce((s, x) => s + x.score, 0) / auditSections.length);
+
+  // Score ring
+  const ring = document.getElementById('ring');
+  ring.className = 'ring ' + (avg >= 75 ? 'g' : avg >= 50 ? 'y' : 'r');
+  document.getElementById('rnum').textContent  = avg;
+  document.getElementById('rtitle').textContent = avg >= 75 ? 'Great Health' : avg >= 50 ? 'Needs Attention' : 'Action Required';
+  document.getElementById('rdesc').textContent  = avg >= 75
+    ? 'Your sub-account is well configured and ready to grow.'
+    : avg >= 50
+    ? 'Some areas need attention to improve overall performance.'
+    : 'Multiple critical issues found — immediate action recommended.';
+
+  // Meta chips
+  const locName = D.location?.ok ? (D.location.d?.location?.name || D.location.d?.name || 'Sub-Account') : 'Sub-Account';
+  auditMeta = { score: avg, locName, date: new Date().toLocaleString() };
+
+  document.getElementById('mC').textContent   = D.contacts?.ok  ? (D.contacts.d.total  || (D.contacts.d.contacts  ||[]).length) : 'N/A';
+  document.getElementById('mP').textContent   = D.pipelines?.ok ? (D.pipelines.d.pipelines ||[]).length  : 'N/A';
+  document.getElementById('mW').textContent   = D.workflows?.ok ? (D.workflows.d.workflows  ||[]).length : 'N/A';
+  document.getElementById('mCal').textContent = D.calendars?.ok ? (D.calendars.d.calendars  ||[]).length : 'N/A';
+  document.getElementById('mF').textContent   = D.forms?.ok     ? (D.forms.d.forms          ||[]).length : 'N/A';
+  document.getElementById('auditDate').textContent = 'Audit run: ' + auditMeta.date;
+
+  // Section cards
+  document.getElementById('secGrid').innerHTML = auditSections.map(s => `
+    <div class="sc">
+      <div class="sh">
+        <div class="si" style="background:${s.bg}">${s.icon}</div>
+        <div class="sn">${s.name}</div>
+        <span class="pill ${s.badge}">${s.badge==='pass'?'Pass':s.badge==='warn'?'Warning':'Fail'}</span>
+      </div>
+      <ul class="cl">${s.checks.map(c => `
+        <li>
+          <span class="dot ${c.s}">${c.s==='ok'?'✓':c.s==='warn'?'!':'✗'}</span>
+          ${c.t}
+        </li>`).join('')}
+      </ul>
+      <div class="sf">${s.metric}: <b>${s.metricVal}</b></div>
+    </div>`).join('');
+
+  // Recommendations
+  const recs = buildRecommendations(auditSections);
+  document.getElementById('recList').innerHTML = recs.length
+    ? recs.map((r, i) => `
+        <div class="rec-item">
+          <div class="rec-num">${i + 1}</div>
+          <div class="rec-text"><b>${r.title}:</b> ${r.detail}</div>
+        </div>`).join('')
+    : '<p style="font-size:13px;color:#16a34a;padding:8px 0">No critical issues — your sub-account looks great!</p>';
+}
+
+// ─── Build Sections ───────────────────────────────────────────
+function buildSections(D) {
+  const out = [];
+
+  function add(id, name, icon, bg, score, checks, metric, metricVal) {
+    out.push({ id, name, icon, bg, score, badge: score>=75?'pass':score>=45?'warn':'fail', checks, metric, metricVal });
+  }
+  function errSec(id, name, icon, bg, r) {
+    out.push({ id, name, icon, bg, score: 0, badge: 'fail',
+      checks: [{ s:'fail', t: 'API error: ' + (r?.err || 'Request failed').slice(0, 80) }],
+      metric: 'Status', metricVal: 'Error' });
+  }
+
+  // 1. Contacts
+  { const r = D.contacts;
+    if (!r?.ok) { errSec('contacts','Contacts & CRM','👥','#dbeafe',r); }
+    else {
+      let sc=100, ch=[];
+      const list = r.d.contacts || [], total = r.d.total || list.length;
+      ch.push({ s:'ok', t:`${total} total contacts in account` });
+      const noEmail = list.filter(c => !c.email).length;
+      if (noEmail > 0)       { ch.push({ s:'warn', t:`${noEmail} contacts are missing email address` }); sc -= 15; }
+      else                     ch.push({ s:'ok',   t:'All contacts have an email address' });
+      const noPhone = list.filter(c => !c.phone).length;
+      if (list.length > 0 && noPhone > list.length * 0.5) { ch.push({ s:'warn', t:`${noPhone} contacts are missing phone number` }); sc -= 10; }
+      else                                                   ch.push({ s:'ok',   t:'Good phone number coverage' });
+      const tagged = list.filter(c => c.tags?.length > 0).length;
+      if (list.length > 5 && tagged < list.length * 0.3) { ch.push({ s:'warn', t:'Less than 30% of contacts are tagged' }); sc -= 5; }
+      else if (list.length > 0)                            ch.push({ s:'ok',   t:'Good tag usage across contacts' });
+      if (total === 0) { sc = 20; ch = [{ s:'fail', t:'No contacts found in this sub-account' }]; }
+      add('contacts','Contacts & CRM','👥','#dbeafe', sc, ch, 'Total contacts', total);
+    }
+  }
+
+  // 2. Pipelines & Opportunities
+  { const rp = D.pipelines, ro = D.opps;
+    if (!rp?.ok && !ro?.ok) { errSec('pipelines','Pipelines & Opportunities','📊','#ede9fe', rp); }
+    else {
+      let sc=100, ch=[];
+      const pipes = rp?.ok ? (rp.d.pipelines || []) : [];
+      const opps  = ro?.ok ? (ro.d.opportunities || []) : [];
+      if (pipes.length === 0) { ch.push({ s:'warn', t:'No pipelines configured yet' }); sc -= 35; }
+      else                      ch.push({ s:'ok',   t:`${pipes.length} pipeline(s) configured` });
+      if (opps.length > 0)      ch.push({ s:'ok',   t:`${opps.length} active opportunities tracked` });
+      else                    { ch.push({ s:'warn', t:'No active opportunities found' }); sc -= 20; }
+      const stale = opps.filter(o => { try { return (Date.now() - new Date(o.dateLastStatusChange || o.dateAdded)) > 30*864e5; } catch { return false; } }).length;
+      if (stale > 0) { ch.push({ s:'warn', t:`${stale} opportunities have not moved in over 30 days` }); sc -= 10; }
+      else if (opps.length > 0) ch.push({ s:'ok', t:'No stale opportunities detected' });
+      add('pipelines','Pipelines & Opportunities','📊','#ede9fe', sc, ch, 'Pipelines', pipes.length);
+    }
+  }
+
+  // 3. Funnels & Websites
+  { const r = D.funnels;
+    if (!r?.ok) { errSec('funnels','Funnels & Websites','🌐','#dcfce7', r); }
+    else {
+      let sc=100, ch=[];
+      const list = r.d.funnels || [];
+      if (list.length === 0) { ch.push({ s:'warn', t:'No funnels or websites found' }); sc = 40; }
+      else                     ch.push({ s:'ok',   t:`${list.length} funnel/website(s) found` });
+      const pub = list.filter(f => f.isPublished || f.type === 'website').length;
+      if (pub > 0)           ch.push({ s:'ok',   t:`${pub} are published and live` });
+      else if (list.length)  { ch.push({ s:'warn', t:'None of your funnels are published yet' }); sc -= 20; }
+      add('funnels','Funnels & Websites','🌐','#dcfce7', sc, ch, 'Total', list.length);
+    }
+  }
+
+  // 4. Workflows
+  { const r = D.workflows;
+    if (!r?.ok) { errSec('workflows','Automations & Workflows','⚡','#fef9c3', r); }
+    else {
+      let sc=100, ch=[];
+      const list  = r.d.workflows || [];
+      const act   = list.filter(w => w.status === 'published').length;
+      const draft = list.filter(w => w.status === 'draft').length;
+      if (list.length === 0) { ch.push({ s:'warn', t:'No workflows found in this account' }); sc = 40; }
+      else                     ch.push({ s:'ok',   t:`${list.length} total workflow(s)` });
+      if (act > 0)             ch.push({ s:'ok',   t:`${act} workflow(s) are active and running` });
+      else if (list.length)  { ch.push({ s:'warn', t:'No workflows are currently active' }); sc -= 30; }
+      if (draft > 0)           ch.push({ s:'warn', t:`${draft} workflow(s) are still in draft` });
+      add('workflows','Automations & Workflows','⚡','#fef9c3', sc, ch, 'Active', act || 0);
+    }
+  }
+
+  // 5. Calendars
+  { const r = D.calendars;
+    if (!r?.ok) { errSec('calendars','Calendars & Appointments','📅','#fce7f3', r); }
+    else {
+      let sc=100, ch=[];
+      const list = r.d.calendars || [];
+      const wt   = list.filter(c => c.teamMembers?.length > 0).length;
+      if (list.length === 0) { ch.push({ s:'warn', t:'No calendars have been configured' }); sc = 40; }
+      else                     ch.push({ s:'ok',   t:`${list.length} calendar(s) set up` });
+      if (wt > 0)              ch.push({ s:'ok',   t:`${wt} calendar(s) have team members assigned` });
+      else if (list.length)    ch.push({ s:'warn', t:'No team members assigned to any calendar' });
+      add('calendars','Calendars & Appointments','📅','#fce7f3', sc, ch, 'Calendars', list.length);
+    }
+  }
+
+  // 6. Forms & Surveys
+  { const r = D.forms;
+    if (!r?.ok) { errSec('forms','Forms & Surveys','📋','#e0f2fe', r); }
+    else {
+      let sc=100, ch=[];
+      const list  = r.d.forms || [];
+      const surv  = list.filter(f => f.formType === 'survey').length;
+      if (list.length === 0) { ch.push({ s:'warn', t:'No forms or surveys found' }); sc = 50; }
+      else                     ch.push({ s:'ok',   t:`${list.length} form/survey(s) created` });
+      if (surv > 0)            ch.push({ s:'ok',   t:`${surv} survey(s) configured` });
+      else if (list.length)    ch.push({ s:'warn', t:'No surveys configured yet' });
+      add('forms','Forms & Surveys','📋','#e0f2fe', sc, ch, 'Total', list.length);
+    }
+  }
+
+  // 7. Email/SMS Settings
+  { const r = D.location;
+    if (!r?.ok) { errSec('email','Email/SMS Settings','📧','#f0fdf4', r); }
+    else {
+      let sc=100, ch=[];
+      const loc      = r.d.location || r.d || {};
+      const hasEmail = !!(loc.email || loc.settings?.communications?.email);
+      const hasPhone = !!(loc.phone || loc.settings?.communications?.phone);
+      const tz       = loc.timezone || loc.settings?.timezone;
+      if (!hasEmail) { ch.push({ s:'warn', t:'No sender email address configured' }); sc -= 25; }
+      else             ch.push({ s:'ok',   t:'Sender email address is set up' });
+      if (!hasPhone) { ch.push({ s:'warn', t:'No phone or SMS number configured' }); sc -= 25; }
+      else             ch.push({ s:'ok',   t:'Phone/SMS number is configured' });
+      if (tz)          ch.push({ s:'ok',   t:`Timezone configured: ${tz}` });
+      else           { ch.push({ s:'warn', t:'No timezone has been configured' }); sc -= 10; }
+      add('email','Email/SMS Settings','📧','#f0fdf4', sc, ch, 'Status', hasEmail && hasPhone ? 'Ready' : 'Incomplete');
+    }
+  }
+
+  // 8. Integrations & Custom Values
+  { const r = D.customVals;
+    if (!r?.ok) { errSec('customVals','Integrations & API','🔗','#fff7ed', r); }
+    else {
+      let sc=100, ch=[];
+      const list  = r.d.customValues || [];
+      const keys  = ['stripe','twilio','mailgun','sendgrid','zapier','google','facebook','paypal','shopify'];
+      const found = list.filter(v => keys.some(k => (v.name||'').toLowerCase().includes(k))).length;
+      if (list.length === 0) { ch.push({ s:'warn', t:'No custom values configured' }); sc = 50; }
+      else                     ch.push({ s:'ok',   t:`${list.length} custom value(s) set up` });
+      if (found > 0)           ch.push({ s:'ok',   t:`${found} known integration reference(s) found` });
+      else                     ch.push({ s:'warn', t:'No known integration references detected' });
+      add('customVals','Integrations & API','🔗','#fff7ed', sc, ch, 'Custom Values', list.length);
+    }
+  }
+
+  return out;
+}
+
+// ─── Build Recommendations ────────────────────────────────────
+function buildRecommendations(sections) {
+  const suggestions = {
+    contacts:   'Go to Contacts and fill in missing data. Use bulk import/export to update records in bulk.',
+    pipelines:  'Create at least one pipeline in Opportunities to track your leads through your sales process.',
+    funnels:    'Build and publish at least one funnel or landing page to start capturing leads online.',
+    workflows:  'Activate your key workflows so automations run automatically for new leads and contacts.',
+    calendars:  'Set up a calendar and assign team members so clients can book appointments online.',
+    forms:      'Create at least one lead capture form and embed it on your funnel or website.',
+    email:      'Go to Settings → Business Info to add your sender email, phone number, and timezone.',
+    customVals: 'Add custom values for integrations under Settings → Custom Values to connect third-party tools.',
+  };
+
+  const recs = [];
+  for (const s of sections) {
+    if (s.badge === 'fail' || s.badge === 'warn') {
+      const issues = s.checks.filter(c => c.s === 'warn' || c.s === 'fail');
+      for (const issue of issues) {
+        recs.push({
+          title:  s.name,
+          detail: issue.t + ' — ' + (suggestions[s.id] || 'Review this section in your GHL sub-account settings.'),
+        });
+      }
+    }
+  }
+  return recs.slice(0, 10);
+}
+
+// ─── PDF Export ───────────────────────────────────────────────
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = 210, M = 16;
+  let y = 0;
+
+  const newPage = () => { doc.addPage(); y = 18; };
+  const chk     = (need) => { if (y + need > 278) newPage(); };
+
+  // Header
+  doc.setFillColor(102, 126, 234);
+  doc.rect(0, 0, W, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(17);
+  doc.text('GHL Sub-Account Audit Report', M, 13);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  doc.text(`Location: ${auditMeta.locName}   |   ${auditMeta.date}`, M, 22);
+  y = 40;
+
+  // Score block
+  const sc = auditMeta.score;
+  const scCol = sc>=75?[34,197,94]:sc>=50?[245,158,11]:[239,68,68];
+  doc.setFillColor(...scCol);
+  doc.roundedRect(M, y, 52, 24, 3, 3, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(26);
+  doc.text(`${sc}`, M+8, y+16);
+  doc.setFontSize(10); doc.text('/100', M+24, y+16);
+  doc.setFontSize(14); doc.setTextColor(26,26,46);
+  doc.text(sc>=75?'Great Health':sc>=50?'Needs Attention':'Action Required', M+58, y+10);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,139);
+  doc.text(sc>=75?'Sub-account is well configured.':sc>=50?'Some areas need improvement.':'Multiple issues found.', M+58, y+18);
+  y += 34;
+
+  // Sections
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(26,26,46);
+  doc.text('Section Results', M, y); y += 7;
+
+  for (const s of auditSections) {
+    chk(32);
+    const bCol = s.badge==='pass'?[34,197,94]:s.badge==='warn'?[234,179,8]:[239,68,68];
+    // section row bg
+    doc.setFillColor(248,250,252);
+    doc.roundedRect(M, y, W-M*2, 9, 2, 2, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(26,26,46);
+    doc.text(`${s.icon}  ${s.name}`, M+3, y+6);
+    // badge
+    doc.setFillColor(...bCol);
+    doc.roundedRect(W-M-22, y+2, 22, 5.5, 2, 2, 'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(7.5);
+    const bl = s.badge==='pass'?'PASS':s.badge==='warn'?'WARNING':'FAIL';
+    doc.text(bl, W-M-22+(22-doc.getTextWidth(bl))/2, y+6.2);
+    y += 11;
+
+    for (const c of s.checks) {
+      chk(7);
+      const dCol = c.s==='ok'?[34,197,94]:c.s==='warn'?[234,179,8]:[239,68,68];
+      doc.setFillColor(...dCol); doc.circle(M+4, y+2, 1.6, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(71,85,105);
+      doc.text(c.t.slice(0,90), M+9, y+3.5);
+      y += 6.5;
+    }
+    doc.setFont('helvetica','italic'); doc.setFontSize(7.5); doc.setTextColor(148,163,184);
+    doc.text(`${s.metric}: ${s.metricVal}`, M+3, y);
+    y += 9;
+  }
+
+  // Recommendations
+  const recs = buildRecommendations(auditSections);
+  if (recs.length > 0) {
+    chk(18);
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(26,26,46);
+    doc.text('Recommendations', M, y); y += 7;
+
+    recs.forEach((r, i) => {
+      chk(18);
+      doc.setFillColor(239,246,255);
+      doc.roundedRect(M, y, W-M*2, 14, 2, 2, 'F');
+      doc.setFillColor(102,126,234); doc.circle(M+7, y+7, 4.5, 'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+      doc.text(`${i+1}`, M+5.2, y+8.5);
+      doc.setTextColor(26,26,46); doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+      doc.text(r.title, M+14, y+5.5);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(71,85,105);
+      const lines = doc.splitTextToSize(r.detail, W-M*2-18);
+      doc.text(lines[0].slice(0,100), M+14, y+11);
+      y += 17;
+    });
+  }
+
+  // Footer on all pages
+  const total = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(148,163,184);
+    doc.text(`GHL Audit Tool  •  Page ${i} of ${total}`, M, 292);
+    doc.text('Generated automatically — confidential', W-M-60, 292);
+  }
+
+  const filename = `GHL-Audit-${auditMeta.locName.replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(filename);
+}
+
+// ─── Reset ────────────────────────────────────────────────────
+function resetApp() {
+  auditSections = [];
+  auditMeta     = {};
+  document.getElementById('resultsScreen').style.display = 'none';
+  document.getElementById('inputScreen').style.display   = 'block';
+  document.getElementById('runBtn').disabled = false;
+}
+</script>
+</body>
+</html>
