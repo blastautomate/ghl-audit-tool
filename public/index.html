@@ -8,831 +8,460 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
-.topbar{background:#1a1d27;border-bottom:1px solid #2d3148;padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:99}
-.logo{width:38px;height:38px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex-shrink:0}
-.topbar h1{font-size:16px;font-weight:700;color:#f1f5f9}
-.topbar p{font-size:12px;color:#64748b}
-.wrap{max-width:1000px;margin:0 auto;padding:28px 16px}
+.page{max-width:960px;margin:0 auto;padding:32px 20px}
 
-/* Input */
-.card{background:#1a1d27;border-radius:14px;border:1px solid #2d3148;padding:28px;margin-bottom:20px}
-.card h2{font-size:15px;font-weight:700;margin-bottom:4px;color:#f1f5f9}
-.sub{font-size:13px;color:#64748b;margin-bottom:20px}
-.note{background:#1e2235;border:1px solid #3730a3;border-radius:8px;padding:12px 14px;font-size:12px;color:#a5b4fc;margin-bottom:18px;line-height:1.8}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.field input{width:100%;padding:11px 14px;border:1.5px solid #2d3148;border-radius:9px;font-size:14px;background:#0f1117;outline:none;transition:border .15s;color:#f1f5f9}
-.field input:focus{border-color:#6366f1}
-.hint{font-size:11px;color:#475569;margin-top:5px}
-.btn-run{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;letter-spacing:.2px}
-.btn-run:hover{opacity:.88}
-.btn-run:disabled{opacity:.4;cursor:not-allowed}
-.err{background:#2d1515;border:1px solid #7f1d1d;border-radius:8px;padding:12px 16px;font-size:13px;color:#fca5a5;margin-bottom:14px;display:none}
+/* ── Login ── */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-card{background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:40px;width:100%;max-width:460px}
+.login-logo{font-size:28px;font-weight:700;color:#7c6af5;margin-bottom:6px}
+.login-sub{color:#8892a4;font-size:14px;margin-bottom:32px}
+label{display:block;font-size:13px;color:#8892a4;margin-bottom:6px;font-weight:500}
+input{width:100%;background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:12px 14px;color:#e2e8f0;font-size:14px;outline:none;transition:border .2s}
+input:focus{border-color:#7c6af5}
+.btn{width:100%;background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;transition:opacity .2s}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hint{font-size:12px;color:#5a6275;margin-top:8px}
 
-/* Loading */
-.prog-card{background:#1a1d27;border-radius:14px;border:1px solid #2d3148;padding:40px 24px;margin-bottom:20px;display:none;text-align:center}
-.spinner{width:48px;height:48px;border:4px solid #2d3148;border-top-color:#6366f1;border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 18px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.prog-lbl{font-size:15px;font-weight:700;margin-bottom:6px;color:#f1f5f9}
-.prog-sub{font-size:12px;color:#64748b}
-.prog-steps{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.step-chip{font-size:11px;padding:4px 10px;border-radius:20px;background:#0f1117;border:1px solid #2d3148;color:#64748b;transition:all .3s}
-.step-chip.done{background:#1e2d1e;border-color:#22c55e;color:#4ade80}
-.step-chip.active{background:#1e1e35;border-color:#6366f1;color:#a5b4fc}
+/* ── Progress ── */
+#progress-wrap{display:none;background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:32px;margin-top:32px}
+.prog-title{font-size:18px;font-weight:600;margin-bottom:20px;color:#c8b8ff}
+.steps{list-style:none}
+.step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1e2235;font-size:14px;color:#8892a4;transition:color .3s}
+.step:last-child{border-bottom:none}
+.step.done{color:#4ade80}
+.step.active{color:#e2e8f0;font-weight:500}
+.step.error{color:#f87171}
+.step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:#1e2235}
+.step.done .step-icon{background:#166534;color:#4ade80}
+.step.active .step-icon{background:#3730a3;color:#c8b8ff;animation:pulse 1s infinite}
+.step.error .step-icon{background:#7f1d1d;color:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* Results */
-.results{display:none}
-.top-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-.back-btn{background:#1a1d27;border:1px solid #2d3148;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;color:#94a3b8}
-.back-btn:hover{background:#2d3148}
-.pdf-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:9px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
-.pdf-btn:hover{opacity:.88}
+/* ── Dashboard ── */
+#dashboard{display:none}
+.score-hero{background:linear-gradient(135deg,#1a1d27,#1e1b35);border:1px solid #2d3148;border-radius:16px;padding:36px;text-align:center;margin-bottom:28px}
+.score-big{font-size:80px;font-weight:800;line-height:1;margin-bottom:8px}
+.score-label{font-size:20px;font-weight:600;margin-bottom:12px}
+.score-desc{color:#8892a4;font-size:14px;max-width:500px;margin:0 auto}
+.great{color:#4ade80} .warn{color:#fbbf24} .bad{color:#f87171}
 
-/* Score Banner */
-.banner{background:#1a1d27;border-radius:14px;border:1px solid #2d3148;padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-.ring{width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:5px solid}
-.ring.g{border-color:#22c55e;background:#0d1f0d;color:#4ade80}
-.ring.y{border-color:#f59e0b;background:#1f1500;color:#fbbf24}
-.ring.r{border-color:#ef4444;background:#1f0d0d;color:#f87171}
-.rnum{font-size:28px;font-weight:800;line-height:1}
-.rlbl{font-size:10px;color:#475569;margin-top:2px;font-weight:600}
-.binfo{flex:1;min-width:200px}
-.binfo h2{font-size:20px;font-weight:800;margin-bottom:4px;color:#f1f5f9}
-.binfo p{font-size:13px;color:#94a3b8;margin-bottom:12px;line-height:1.6}
-.meta-row{display:flex;gap:16px;flex-wrap:wrap}
-.mc{font-size:12px;color:#64748b;background:#0f1117;padding:5px 10px;border-radius:6px;border:1px solid #2d3148}
-.mc b{color:#f1f5f9;font-weight:700}
-.audit-date{font-size:11px;color:#475569;margin-top:10px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:18px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:#c8b8ff}
+.stat-lbl{font-size:12px;color:#8892a4;margin-top:4px}
 
-/* Priority Issues */
-.priority-section{margin-bottom:20px}
-.priority-section h3{font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.issues-grid{display:flex;flex-direction:column;gap:8px}
-.issue-item{background:#1a1d27;border-radius:10px;padding:14px 16px;border-left:4px solid;display:flex;align-items:flex-start;gap:12px}
-.issue-item.critical{border-color:#ef4444;background:#1f0d0d}
-.issue-item.warning{border-color:#f59e0b;background:#1f1500}
-.issue-item.suggestion{border-color:#6366f1;background:#0f1117}
-.issue-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.issue-item.critical .issue-icon{background:#7f1d1d;color:#fca5a5}
-.issue-item.warning .issue-icon{background:#78350f;color:#fde68a}
-.issue-item.suggestion .issue-icon{background:#1e1e35;color:#a5b4fc}
-.issue-body{flex:1}
-.issue-title{font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:3px}
-.issue-desc{font-size:12px;color:#94a3b8;line-height:1.5;margin-bottom:6px}
-.issue-fix{font-size:11.5px;color:#6366f1;background:#1e1e35;padding:6px 10px;border-radius:6px;border:1px solid #3730a3;line-height:1.5}
-.issue-fix b{color:#a5b4fc}
-.issue-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px}
-.issue-badge.critical{background:#7f1d1d;color:#fca5a5}
-.issue-badge.warning{background:#78350f;color:#fde68a}
-.issue-badge.suggestion{background:#1e1e35;color:#a5b4fc}
+/* ── Issues ── */
+.section-title{font-size:18px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.issues-list{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.issue-card{background:#1a1d27;border-left:4px solid;border-radius:0 10px 10px 0;padding:16px 18px}
+.issue-card.critical{border-color:#f87171}
+.issue-card.warning{border-color:#fbbf24}
+.issue-card.suggestion{border-color:#60a5fa}
+.issue-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.badge.critical{background:#7f1d1d;color:#fca5a5}
+.badge.warning{background:#78350f;color:#fde68a}
+.badge.suggestion{background:#1e3a5f;color:#93c5fd}
+.issue-title{font-size:14px;font-weight:600;color:#e2e8f0}
+.issue-section{font-size:12px;color:#5a6275;margin-left:auto}
+.issue-detail{font-size:13px;color:#8892a4;margin-bottom:6px}
+.issue-fix{font-size:13px;color:#a78bfa}
+.issue-fix::before{content:"→ Fix: ";font-weight:600}
 
-/* Section Cards */
-.sections-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-@media(max-width:640px){.sections-grid{grid-template-columns:1fr}}
-.sec{background:#1a1d27;border-radius:12px;border:1px solid #2d3148;padding:18px}
-.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.sec-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.sec-name{font-size:13px;font-weight:700;flex:1;color:#f1f5f9}
-.score-bar-wrap{margin-bottom:12px}
-.score-bar-label{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:4px}
-.score-bar-label span{font-weight:700;color:#f1f5f9}
-.score-bar{height:5px;background:#2d3148;border-radius:99px;overflow:hidden}
-.score-bar-fill{height:5px;border-radius:99px;transition:width .6s ease}
-.pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
-.pill.pass{background:#14532d;color:#4ade80}
-.pill.warn{background:#78350f;color:#fde68a}
-.pill.fail{background:#7f1d1d;color:#fca5a5}
-.cl{list-style:none}
-.cl li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;padding:5px 0;border-bottom:1px solid #2d3148;color:#94a3b8;line-height:1.45}
-.cl li:last-child{border-bottom:none}
-.dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:1px}
-.dot.ok{background:#14532d;color:#4ade80}
-.dot.warn{background:#78350f;color:#fde68a}
-.dot.fail{background:#7f1d1d;color:#fca5a5}
-.dot.info{background:#1e1e35;color:#a5b4fc}
-.sec-expert{margin-top:12px;padding:10px 12px;background:#0f1117;border-radius:8px;border:1px solid #2d3148;font-size:11.5px;color:#94a3b8;line-height:1.6;font-style:italic}
-.sec-expert b{color:#a5b4fc;font-style:normal}
-.sf{display:flex;justify-content:space-between;font-size:11px;color:#475569;margin-top:10px;padding-top:8px;border-top:1px solid #2d3148}
-.sf b{color:#94a3b8;font-weight:600}
+/* ── Sections Grid ── */
+.sections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px}
+.section-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:20px}
+.sc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sc-name{font-size:14px;font-weight:600}
+.sc-score{font-size:22px;font-weight:700}
+.sc-bar-bg{background:#0f1117;border-radius:99px;height:6px;margin-bottom:10px;overflow:hidden}
+.sc-bar{height:6px;border-radius:99px;transition:width .8s ease}
+.sc-expert{font-size:12px;color:#8892a4;line-height:1.5}
 
-/* Benchmarks */
-.bench-section{background:#1a1d27;border-radius:14px;border:1px solid #2d3148;padding:20px;margin-bottom:20px}
-.bench-section h3{font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:14px}
-.bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.bench-card{background:#0f1117;border-radius:10px;padding:14px;border:1px solid #2d3148}
-.bench-label{font-size:11px;color:#64748b;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-.bench-value{font-size:22px;font-weight:800;color:#f1f5f9;line-height:1}
-.bench-sub{font-size:11px;color:#475569;margin-top:4px}
-.bench-bar{height:4px;background:#2d3148;border-radius:99px;margin-top:8px;overflow:hidden}
-.bench-bar-fill{height:4px;border-radius:99px}
+/* ── Benchmarks ── */
+.benchmarks{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:24px;margin-bottom:32px}
+.bench-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #1e2235}
+.bench-row:last-child{border-bottom:none}
+.bench-label{font-size:13px;color:#8892a4;width:200px;flex-shrink:0}
+.bench-bar-bg{flex:1;background:#0f1117;border-radius:99px;height:8px;overflow:hidden}
+.bench-bar{height:8px;border-radius:99px}
+.bench-val{font-size:13px;font-weight:600;width:50px;text-align:right;flex-shrink:0}
 
-/* Expert Summary */
-.expert-summary{background:#1e1e35;border:1px solid #3730a3;border-radius:14px;padding:20px;margin-bottom:20px}
-.expert-summary h3{font-size:14px;font-weight:700;color:#a5b4fc;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.expert-summary p{font-size:13px;color:#c7d2fe;line-height:1.7}
+/* ── PDF Button ── */
+.pdf-btn{background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;margin:0 auto 40px}
+.pdf-btn:hover{opacity:.9}
+
+/* ── Responsive ── */
+@media(max-width:600px){.score-big{font-size:56px}.stats-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="logo">GHL</div>
-  <div><h1>Expert Audit Engine</h1><p>Deep GHL account analysis · Best practice benchmarking · Expert recommendations</p></div>
-</div>
-<div class="wrap">
 
-  <!-- Input -->
-  <div class="card" id="inputScreen">
-    <h2>Connect Your GHL Sub-Account</h2>
-    <p class="sub">The audit engine will analyze every aspect of your account like a certified GHL expert — identifying flaws, gaps, and opportunities.</p>
-    <div class="note">
-      <b>Required scopes for full audit:</b> contacts.readonly · opportunities.readonly · funnels.readonly · workflows.readonly · calendars.readonly · forms.readonly · locations.readonly · custom-values.readonly · custom-fields.readonly · tags.readonly · users.readonly · conversations.readonly
-    </div>
-    <div class="err" id="errBox"></div>
-    <div class="field">
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">GHL Expert Audit</div>
+    <div class="login-sub">Deep health check & expert analysis for any sub-account</div>
+    <div style="margin-bottom:18px">
       <label>Private Integration Token</label>
-      <input type="password" id="apiKey" placeholder="pit-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off"/>
-      <div class="hint">Sub-Account Settings → Private Integrations → Create & copy token</div>
+      <input type="password" id="token" placeholder="pit-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+      <div class="hint">Settings → Private Integrations → Create token with all readonly scopes</div>
     </div>
-    <div class="field">
+    <div>
       <label>Location ID</label>
-      <input type="text" id="locId" placeholder="e.g. ve9EPM428h8vShlRW1KT" autocomplete="off"/>
-      <div class="hint">Sub-Account Settings → Business Profile → Location ID</div>
+      <input type="text" id="locationId" placeholder="Paste your Location ID here">
+      <div class="hint">Settings → Business Info → scroll to the bottom to find Location ID</div>
     </div>
-    <button class="btn-run" id="runBtn" onclick="startAudit()">Run Expert Audit</button>
+    <button class="btn" id="run-btn" onclick="runAudit()">Run Full Expert Audit</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="page" id="progress-wrap">
+  <div class="prog-title">🔍 Auditing your account…</div>
+  <ul class="steps" id="steps-list"></ul>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:24px;font-weight:700" id="loc-name">Account Audit</div>
+      <div style="font-size:13px;color:#8892a4" id="audit-time"></div>
+    </div>
+    <button onclick="resetAudit()" style="background:#1a1d27;border:1px solid #2d3148;color:#8892a4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px">← New Audit</button>
   </div>
 
-  <!-- Loading -->
-  <div class="prog-card" id="progCard">
-    <div class="spinner"></div>
-    <div class="prog-lbl" id="progLbl">Connecting to GHL API...</div>
-    <div class="prog-sub" id="progSub">Fetching all account data simultaneously</div>
-    <div class="prog-steps" id="progSteps"></div>
+  <!-- Score Hero -->
+  <div class="score-hero">
+    <div class="score-big" id="score-big">—</div>
+    <div class="score-label" id="score-label">Analysing…</div>
+    <div class="score-desc" id="expert-summary"></div>
   </div>
 
-  <!-- Results -->
-  <div class="results" id="resultsScreen">
-    <div class="top-actions">
-      <button class="back-btn" onclick="resetApp()">← New Audit</button>
-      <button class="pdf-btn" onclick="exportPDF()">⬇ Download Expert Report PDF</button>
-    </div>
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row"></div>
 
-    <div class="banner">
-      <div class="ring" id="ring"><span class="rnum" id="rnum">--</span><span class="rlbl">/ 100</span></div>
-      <div class="binfo">
-        <h2 id="rtitle">--</h2>
-        <p id="rdesc">--</p>
-        <div class="meta-row" id="metaRow"></div>
-        <div class="audit-date" id="auditDate"></div>
-      </div>
-    </div>
+  <!-- Priority Issues -->
+  <div class="section-title">⚠️ Priority Issues</div>
+  <div class="issues-list" id="issues-list"></div>
 
-    <!-- Expert Summary -->
-    <div class="expert-summary" id="expertSummary">
-      <h3>🧠 Expert Analysis</h3>
-      <p id="expertSummaryText">--</p>
-    </div>
+  <!-- Section Cards -->
+  <div class="section-title">📋 Section Analysis</div>
+  <div class="sections-grid" id="sections-grid"></div>
 
-    <!-- Priority Issues -->
-    <div class="priority-section">
-      <h3>🚨 Priority Issues <span id="issueCount" style="font-size:12px;color:#64748b;font-weight:400"></span></h3>
-      <div class="issues-grid" id="issuesGrid"></div>
-    </div>
+  <!-- Benchmarks -->
+  <div class="section-title">📊 Benchmarks vs Best Practice</div>
+  <div class="benchmarks" id="benchmarks"></div>
 
-    <!-- Benchmarks -->
-    <div class="bench-section">
-      <h3>📊 Account Benchmarks vs Best Practice</h3>
-      <div class="bench-grid" id="benchGrid"></div>
-    </div>
+  <!-- PDF Export -->
+  <button class="pdf-btn" onclick="exportPDF()">⬇️ Download Expert Report PDF</button>
 
-    <!-- Section Cards -->
-    <div class="sections-grid" id="secGrid"></div>
-  </div>
 </div>
 
 <script>
-let auditResult = {}, auditMeta = {}, auditSections = [], allIssues = [];
+const SECTION_META = {
+  workflows:    { label: 'Automations & Workflows', icon: '⚡' },
+  contacts:     { label: 'Contacts & CRM',          icon: '👥' },
+  pipelines:    { label: 'Pipelines & Opportunities',icon: '🔁' },
+  calendars:    { label: 'Calendars & Appointments', icon: '📅' },
+  forms:        { label: 'Forms & Surveys',          icon: '📋' },
+  settings:     { label: 'Email / SMS Settings',     icon: '📡' },
+  customValues: { label: 'Custom Fields & Values',   icon: '🗂️' },
+  funnels:      { label: 'Funnels & Websites',       icon: '🌐' },
+};
 
-const STEPS = ['Location Info','Contacts','Pipelines','Opportunities','Funnels','Workflows','Calendars','Forms','Custom Values','Custom Fields','Tags','Users','Conversations'];
+const STEPS = [
+  { key: 'settings',     label: 'Location & Settings' },
+  { key: 'contacts',     label: 'Contacts & CRM' },
+  { key: 'pipelines',    label: 'Pipelines & Opportunities' },
+  { key: 'workflows',    label: 'Automations & Workflows' },
+  { key: 'calendars',    label: 'Calendars & Appointments' },
+  { key: 'forms',        label: 'Forms & Surveys' },
+  { key: 'customValues', label: 'Custom Fields & Values' },
+  { key: 'funnels',      label: 'Funnels & Websites' },
+  { key: 'done',         label: 'Building Expert Report' },
+];
 
-async function startAudit() {
-  const token = document.getElementById('apiKey').value.trim();
-  const locId = document.getElementById('locId').value.trim();
-  const errBox = document.getElementById('errBox');
-  errBox.style.display = 'none';
-  if (!token || !locId) { errBox.textContent = 'Please fill in both fields.'; errBox.style.display = 'block'; return; }
+let auditData = null;
 
-  document.getElementById('runBtn').disabled = true;
-  document.getElementById('inputScreen').style.display = 'none';
-  document.getElementById('progCard').style.display = 'block';
-
-  const stepsEl = document.getElementById('progSteps');
-  stepsEl.innerHTML = STEPS.map((s,i) => `<span class="step-chip" id="chip${i}">${s}</span>`).join('');
-
-  document.getElementById('progLbl').textContent = 'Running deep audit...';
-  document.getElementById('progSub').textContent = 'Fetching all 13 data sources simultaneously';
-
-  STEPS.forEach((_,i) => { setTimeout(() => { document.getElementById(`chip${i}`)?.classList.add('active'); setTimeout(() => document.getElementById(`chip${i}`)?.classList.replace('active','done'), 800 + i*200); }, i*300); });
-
-  try {
-    const res = await fetch('/api/audit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, locationId: locId }) });
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
-    auditResult = await res.json();
-    setTimeout(() => renderResults(), 1500);
-  } catch(e) {
-    document.getElementById('progCard').style.display = 'none';
-    document.getElementById('inputScreen').style.display = 'block';
-    document.getElementById('runBtn').disabled = false;
-    errBox.textContent = 'Error: ' + e.message;
-    errBox.style.display = 'block';
-  }
+function scoreColor(s) {
+  if (s >= 75) return '#4ade80';
+  if (s >= 45) return '#fbbf24';
+  return '#f87171';
+}
+function scoreClass(s) {
+  if (s >= 75) return 'great';
+  if (s >= 45) return 'warn';
+  return 'bad';
+}
+function scoreLabel(s) {
+  if (s >= 85) return '🏆 Excellent Health';
+  if (s >= 70) return '✅ Great Health';
+  if (s >= 50) return '⚠️ Needs Attention';
+  return '🚨 Action Required';
 }
 
-function renderResults() {
-  document.getElementById('progCard').style.display = 'none';
-  document.getElementById('resultsScreen').style.display = 'block';
-
-  const D = auditResult;
-  auditSections = buildSections(D);
-  allIssues = buildIssues(D, auditSections);
-  const avg = Math.round(auditSections.reduce((s,x) => s+x.score, 0) / auditSections.length);
-
-  const loc = D.location?.ok ? (D.location.d?.location || D.location.d || {}) : {};
-  const locName = loc.name || 'Sub-Account';
-  auditMeta = { score: avg, locName, date: new Date().toLocaleString(), biz: loc.businessName || locName };
-
-  const ring = document.getElementById('ring');
-  ring.className = 'ring ' + (avg>=75?'g':avg>=50?'y':'r');
-  document.getElementById('rnum').textContent = avg;
-  document.getElementById('rtitle').textContent = avg>=80?'Excellent Account Health':avg>=65?'Good Health — Some Gaps':avg>=50?'Needs Attention':avg>=35?'Significant Issues Found':'Critical Problems Detected';
-  document.getElementById('rdesc').textContent = buildOverallDesc(avg, auditSections, allIssues);
-  document.getElementById('auditDate').textContent = `Audit completed: ${auditMeta.date} · Location: ${locName}`;
-
-  // Meta chips
-  const contacts = D.contacts?.ok?(D.contacts.d.contacts||[]):[];
-  const pipes = D.pipelines?.ok?(D.pipelines.d.pipelines||[]):[];
-  const flows = D.workflows?.ok?(D.workflows.d.workflows||[]):[];
-  const cals = D.calendars?.ok?(D.calendars.d.calendars||[]):[];
-  const activeFlows = flows.filter(w=>w.status==='published').length;
-
-  document.getElementById('metaRow').innerHTML = [
-    `Contacts: <b>${D.contacts?.ok?(D.contacts.d.total||contacts.length):'N/A'}</b>`,
-    `Pipelines: <b>${pipes.length}</b>`,
-    `Workflows: <b>${flows.length}</b> (${activeFlows} active)`,
-    `Calendars: <b>${cals.length}</b>`,
-    `Issues: <b>${allIssues.filter(i=>i.level==='critical').length} critical</b>`
-  ].map(t=>`<span class="mc">${t}</span>`).join('');
-
-  // Expert summary
-  document.getElementById('expertSummaryText').textContent = buildExpertSummary(avg, D, auditSections, allIssues);
-
-  // Priority issues
-  const sorted = [...allIssues].sort((a,b)=>(['critical','warning','suggestion'].indexOf(a.level))-(['critical','warning','suggestion'].indexOf(b.level)));
-  document.getElementById('issueCount').textContent = `${allIssues.filter(i=>i.level==='critical').length} critical · ${allIssues.filter(i=>i.level==='warning').length} warnings · ${allIssues.filter(i=>i.level==='suggestion').length} suggestions`;
-  document.getElementById('issuesGrid').innerHTML = sorted.slice(0,20).map(issue => `
-    <div class="issue-item ${issue.level}">
-      <div class="issue-icon">${issue.level==='critical'?'🚨':issue.level==='warning'?'⚠️':'💡'}</div>
-      <div class="issue-body">
-        <div class="issue-title">${issue.section}: ${issue.title}<span class="issue-badge ${issue.level}">${issue.level.toUpperCase()}</span></div>
-        <div class="issue-desc">${issue.desc}</div>
-        <div class="issue-fix"><b>Fix:</b> ${issue.fix}</div>
-      </div>
-    </div>`).join('');
-
-  // Benchmarks
-  renderBenchmarks(D, flows, contacts, pipes, cals);
-
-  // Section cards
-  document.getElementById('secGrid').innerHTML = auditSections.map(s => `
-    <div class="sec">
-      <div class="sec-head">
-        <div class="sec-ico" style="background:${s.bg}">${s.icon}</div>
-        <div class="sec-name">${s.name}</div>
-        <span class="pill ${s.badge}">${s.badge==='pass'?'Pass':s.badge==='warn'?'Warning':'Fail'}</span>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span style="color:#94a3b8">Section Score</span><span>${s.score}/100</span></div>
-        <div class="score-bar"><div class="score-bar-fill" style="width:${s.score}%;background:${s.score>=75?'#22c55e':s.score>=50?'#f59e0b':'#ef4444'}"></div></div>
-      </div>
-      <ul class="cl">${s.checks.map(c=>`<li><span class="dot ${c.s}">${c.s==='ok'?'✓':c.s==='warn'?'!':c.s==='fail'?'✗':'i'}</span>${c.t}</li>`).join('')}</ul>
-      <div class="sec-expert">${s.expert}</div>
-      <div class="sf">${s.metric}: <b>${s.metricVal}</b></div>
-    </div>`).join('');
-}
-
-function renderBenchmarks(D, flows, contacts, pipes, cals) {
-  const active = flows.filter(w=>w.status==='published').length;
-  const draft = flows.filter(w=>w.status==='draft').length;
-  const cvs = D.customVals?.ok?(D.customVals.d.customValues||[]):[];
-  const cfs = D.customFields?.ok?(D.customFields.d.customFields||D.customFields.d||[]):[];
-  const tags = D.tags?.ok?(D.tags.d.tags||[]):[];
-  const total = contacts.length;
-  const withEmail = contacts.filter(c=>c.email).length;
-  const emailPct = total>0?Math.round(withEmail/total*100):0;
-
-  const benchmarks = [
-    { label:'Workflow Activation Rate', value: flows.length>0?Math.round(active/flows.length*100):0, unit:'%', best:80, desc:`${active} active of ${flows.length} total. Best practice: >80% published.` },
-    { label:'Draft Workflow Backlog', value: draft, unit:'', best:0, desc:`${draft} workflows in draft. Best practice: 0 drafts in production account.`, lower:true },
-    { label:'Contact Email Coverage', value: emailPct, unit:'%', best:95, desc:`${withEmail} of ${total} contacts have email. Best practice: >95%.` },
-    { label:'Pipelines Configured', value: pipes.length, unit:'', best:3, desc:`${pipes.length} pipelines. Best practice: at least 3 (lead, onboarding, sales).` },
-    { label:'Custom Values Set Up', value: cvs.length, unit:'', best:20, desc:`${cvs.length} custom values. Best practice: 20+ for a mature account.` },
-    { label:'Custom Fields Created', value: Array.isArray(cfs)?cfs.length:0, unit:'', best:15, desc:`${Array.isArray(cfs)?cfs.length:0} custom fields. Best practice: 15+ for contact tracking.` },
-    { label:'Tags in Use', value: tags.length, unit:'', best:20, desc:`${tags.length} tags. Best practice: 20+ for segmentation.` },
-    { label:'Calendars Configured', value: cals.length, unit:'', best:3, desc:`${cals.length} calendars. Best practice: separate calendars for intro, coaching, admin.` },
-  ];
-
-  document.getElementById('benchGrid').innerHTML = benchmarks.map(b => {
-    const pct = b.lower ? Math.max(0,100-Math.round(b.value/Math.max(b.best*2,1)*100)) : Math.min(100,Math.round(b.value/Math.max(b.best,1)*100));
-    const color = pct>=80?'#22c55e':pct>=50?'#f59e0b':'#ef4444';
-    return `<div class="bench-card">
-      <div class="bench-label">${b.label}</div>
-      <div class="bench-value">${b.value}${b.unit}</div>
-      <div class="bench-sub">${b.desc}</div>
-      <div class="bench-bar"><div class="bench-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-    </div>`;
-  }).join('');
-}
-
-// ─── Expert Commentary ────────────────────────────────────────
-function buildOverallDesc(avg, sections, issues) {
-  const crits = issues.filter(i=>i.level==='critical').length;
-  const warns = issues.filter(i=>i.level==='warning').length;
-  if (avg>=80) return `This is a well-configured GHL account with strong automation fundamentals. ${crits} critical issue${crits!==1?'s':''} and ${warns} warning${warns!==1?'s':''} were identified for optimization.`;
-  if (avg>=65) return `Solid foundation with notable gaps. ${crits} critical issue${crits!==1?'s':''} require immediate attention, and ${warns} areas need improvement to reach best-practice standards.`;
-  if (avg>=50) return `This account has core elements in place but significant gaps in automation, data quality, or configuration. ${crits} critical issues found that are likely impacting business results.`;
-  return `This account has fundamental setup issues that are likely causing missed leads, poor client experience, or revenue loss. ${crits} critical problems require immediate action.`;
-}
-
-function buildExpertSummary(avg, D, sections, issues) {
-  const flows = D.workflows?.ok?(D.workflows.d.workflows||[]):[];
-  const active = flows.filter(w=>w.status==='published').length;
-  const draft = flows.filter(w=>w.status==='draft').length;
-  const pipes = D.pipelines?.ok?(D.pipelines.d.pipelines||[]):[];
-  const contacts = D.contacts?.ok?(D.contacts.d.contacts||[]):[];
-  const crits = issues.filter(i=>i.level==='critical');
-  const loc = D.location?.ok?(D.location.d?.location||D.location.d||{}):{}; 
+function expertSummary(data) {
+  const score   = data.overallScore;
+  const crits   = data.allIssues.filter(i => i.severity === 'critical').length;
+  const warns   = data.allIssues.filter(i => i.severity === 'warning').length;
+  const wf      = data.sections.workflows?.stats || {};
+  const cts     = data.sections.contacts?.stats  || {};
+  const pipes   = data.sections.pipelines?.stats || {};
 
   let summary = `After analyzing this GHL sub-account, here is the expert assessment: `;
+  if (wf.active === 0) summary += `Automation is underdeveloped with only 0 active workflows — this is a significant gap for a production GHL account. `;
+  else if (wf.active < 5) summary += `Automation is limited with only ${wf.active} active workflows — key client journey flows are likely missing. `;
+  else summary += `Automation is solid with ${wf.active} active workflows covering key client touchpoints. `;
 
-  if (active >= 20) summary += `The automation foundation is strong with ${active} active workflows covering key business processes. `;
-  else if (active >= 10) summary += `The account has moderate automation coverage with ${active} active workflows, but there is room to close gaps. `;
-  else summary += `Automation is underdeveloped with only ${active} active workflows — this is a significant gap for a production GHL account. `;
+  if (pipes.pipelines < 2) summary += `Pipeline setup is minimal — a mature account should have separate pipelines for leads, onboarding, and renewals. `;
+  else summary += `Pipeline structure looks reasonable with ${pipes.pipelines} pipeline(s) configured. `;
 
-  if (draft > 5) summary += `There are ${draft} workflows in draft state, which suggests incomplete builds or abandoned projects that need resolution. `;
-
-  if (pipes.length >= 3) summary += `Pipeline structure looks adequate. `;
-  else summary += `Pipeline setup is minimal — a mature account should have separate pipelines for leads, onboarding, and renewals. `;
-
-  if (crits.length === 0) summary += `No critical issues were found, which is a great sign. Focus on the warnings and suggestions to reach elite GHL account standards.`;
-  else if (crits.length <= 3) summary += `There are ${crits.length} critical issue${crits.length!==1?'s':''} that should be fixed immediately: ${crits.slice(0,2).map(c=>c.title).join(', ')}.`;
-  else summary += `With ${crits.length} critical issues, this account needs immediate systematic attention before focusing on growth.`;
+  if (crits > 0) summary += `With ${crits} critical issue${crits > 1 ? 's' : ''}, this account needs immediate systematic attention before focusing on growth.`;
+  else if (warns > 0) summary += `${warns} warning${warns > 1 ? 's' : ''} should be addressed to reach peak performance.`;
+  else summary += `Overall the account is in good health — focus on the suggestions to hit best-practice standards.`;
 
   return summary;
 }
 
-// ─── Issues Engine ────────────────────────────────────────────
-function buildIssues(D, sections) {
-  const issues = [];
-  const add = (level, section, title, desc, fix) => issues.push({ level, section, title, desc, fix });
+async function runAudit() {
+  const token      = document.getElementById('token').value.trim();
+  const locationId = document.getElementById('locationId').value.trim();
+  if (!token || !locationId) { alert('Please enter both your token and Location ID.'); return; }
 
-  const flows = D.workflows?.ok?(D.workflows.d.workflows||[]):[];
-  const contacts = D.contacts?.ok?(D.contacts.d.contacts||[]):[];
-  const pipes = D.pipelines?.ok?(D.pipelines.d.pipelines||[]):[];
-  const opps = D.opps?.ok?(D.opps.d.opportunities||[]):[];
-  const cals = D.calendars?.ok?(D.calendars.d.calendars||[]):[];
-  const forms = D.forms?.ok?(D.forms.d.forms||[]):[];
-  const cvs = D.customVals?.ok?(D.customVals.d.customValues||[]):[];
-  const loc = D.location?.ok?(D.location.d?.location||D.location.d||{}):{}; 
-  const users = D.users?.ok?(D.users.d.users||[]):[];
-  const tags = D.tags?.ok?(D.tags.d.tags||[]):[];
+  document.getElementById('login-wrap').style.display  = 'none';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('dashboard').style.display    = 'none';
 
-  // WORKFLOWS
-  const activeFlows = flows.filter(w=>w.status==='published');
-  const draftFlows = flows.filter(w=>w.status==='draft');
-  const dupNames = flows.map(w=>w.name).filter((n,i,a)=>a.indexOf(n)!==i);
+  // Render steps
+  const stepsList = document.getElementById('steps-list');
+  stepsList.innerHTML = STEPS.map((s, i) => `
+    <li class="step" id="step-${s.key}">
+      <span class="step-icon">${i + 1}</span>
+      ${s.label}
+    </li>
+  `).join('');
 
-  if (flows.length === 0) add('critical','Workflows','No workflows found','This account has zero workflows. All lead nurturing, onboarding, and follow-up automation is missing.','Create essential workflows: lead nurture, appointment confirmation, onboarding series, and payment receipt.');
-  else if (activeFlows.length === 0) add('critical','Workflows','All workflows are in draft','No workflows are currently active/published. No automation is running in this account.','Review all draft workflows and publish the ones that are ready. Start with appointment confirmations and lead follow-up.');
-  else if (draftFlows.length > flows.length * 0.4) add('warning','Workflows',`${draftFlows.length} workflows in draft state`,`${draftFlows.length} of ${flows.length} workflows are drafts. Incomplete workflows create confusion and technical debt.`,`Review each draft: publish if ready, delete if abandoned. Draft names: ${draftFlows.slice(0,3).map(w=>w.name).join(', ')}${draftFlows.length>3?'...':''}`);
-
-  if (dupNames.length > 0) add('warning','Workflows',`Duplicate workflow names detected`,`Found workflows with identical names: ${[...new Set(dupNames)].slice(0,3).join(', ')}. This causes confusion when troubleshooting.`,'Rename duplicate workflows with version numbers or dates to differentiate them. Archive the old versions.');
-
-  const hasOnboarding = flows.some(w=>w.name.toLowerCase().includes('onboard'));
-  const hasFollowUp = flows.some(w=>w.name.toLowerCase().includes('follow') || w.name.toLowerCase().includes('after intro') || w.name.toLowerCase().includes('nurture'));
-  const hasPaymentFail = flows.some(w=>w.name.toLowerCase().includes('failed payment') || w.name.toLowerCase().includes('payment fail'));
-  const hasAppointment = flows.some(w=>w.name.toLowerCase().includes('appointment') || w.name.toLowerCase().includes('booking') || w.name.toLowerCase().includes('confirm'));
-  const hasUnsubscribe = flows.some(w=>w.name.toLowerCase().includes('unsubscribe'));
-  const hasReEngagement = flows.some(w=>w.name.toLowerCase().includes('re-engag') || w.name.toLowerCase().includes('reengage') || w.name.toLowerCase().includes('weekly') || w.name.toLowerCase().includes('renewal'));
-
-  if (!hasOnboarding) add('critical','Workflows','Missing onboarding workflow','No onboarding workflow detected. New clients are not being guided through your process automatically.','Create a new client onboarding workflow: welcome email, resource delivery, next steps, and check-in sequence.');
-  if (!hasFollowUp) add('critical','Workflows','Missing lead follow-up automation','No lead follow-up or nurture sequence found. Leads that don\'t convert immediately are being lost.','Build an after-intro-call workflow that sends follow-up emails based on whether the lead purchased or not.');
-  if (!hasPaymentFail) add('warning','Workflows','No failed payment workflow','If a client\'s payment fails, there is no automated recovery process.','Create a failed payment workflow: immediate notification email + SMS, retry reminders, and pause access after X days.');
-  if (!hasAppointment) add('critical','Workflows','No appointment confirmation workflow','No workflow to confirm, remind, or follow up on appointments. This directly causes no-shows.','Create appointment automation: confirmation email on booking, 24hr reminder, 1hr SMS reminder, post-appointment follow-up.');
-  if (!hasUnsubscribe) add('warning','Workflows','No unsubscribe handling workflow','Without an unsubscribe workflow, contact compliance (CAN-SPAM/GDPR) may be at risk.','Create an unsubscribe workflow that tags contacts and removes them from active campaigns immediately.');
-  if (!hasReEngagement) add('suggestion','Workflows','No re-engagement or renewal workflow','No workflows detected for re-engaging past clients or renewing subscriptions.','Build a renewal reminder workflow 30/14/7 days before expiration, and a win-back sequence for churned clients.');
-
-  // CONTACTS
-  const total = D.contacts?.ok?(D.contacts.d.total||contacts.length):0;
-  const noEmail = contacts.filter(c=>!c.email).length;
-  const noPhone = contacts.filter(c=>!c.phone).length;
-  const noTags = contacts.filter(c=>!c.tags||c.tags.length===0).length;
-  const noPipeline = contacts.filter(c=>!c.assignedTo && !c.userId).length;
-
-  if (noEmail > total*0.1 && total>0) add('warning','Contacts',`${noEmail} contacts missing email`,`${Math.round(noEmail/total*100)}% of contacts have no email address. This breaks all email automations for these contacts.`,'Use GHL\'s bulk import/export to fill in missing emails. Add email as a required field on all your forms going forward.');
-  if (noPhone > total*0.3 && total>0) add('warning','Contacts',`${noPhone} contacts missing phone number`,`${Math.round(noPhone/total*100)}% of contacts have no phone. SMS campaigns and call workflows won\'t reach these contacts.`,'Add phone as a required field on new client forms. Run a re-engagement email asking existing contacts to update their info.');
-  if (noTags > total*0.5 && total>5) add('warning','Contacts',`${noTags} contacts have no tags`,`${Math.round(noTags/total*100)}% of contacts are untagged. Without tags, segmentation and targeted automation is impossible.`,'Audit your workflows to ensure they apply tags at key lifecycle stages: lead, intro-call-booked, new-client, active-client, finished-client.');
-
-  // PIPELINES
-  if (pipes.length === 0) add('critical','Pipelines','No pipelines configured','Without pipelines, there is no structured way to track leads through your sales process.','Create at minimum: a Lead/Prospect pipeline and a Client Lifecycle pipeline with stages matching your business process.');
-  else if (pipes.length === 1) add('warning','Pipelines','Only one pipeline configured','A single pipeline suggests leads and clients are being tracked together, which creates clutter and confusion.','Separate your pipelines: one for new leads/prospects and one for existing client management.');
-
-  const stale = opps.filter(o=>{try{return(Date.now()-new Date(o.dateLastStatusChange||o.dateAdded))>30*864e5;}catch{return false;}}).length;
-  if (stale > 0) add('warning','Pipelines',`${stale} stale opportunities (>30 days)`,`${stale} opportunities have not been updated in over 30 days. Stale pipelines lead to inaccurate reporting and missed follow-ups.`,'Set a weekly pipeline review task. Create a workflow that alerts you when an opportunity hasn\'t moved in 14 days.');
-
-  // CALENDARS
-  if (cals.length === 0) add('critical','Calendars','No calendars configured','No booking calendars are set up. Clients cannot self-book, and appointment workflows have no trigger.','Create at minimum: an introductory/discovery call calendar and a main service delivery calendar.');
-  else {
-    const noTeam = cals.filter(c=>!c.teamMembers||c.teamMembers.length===0);
-    if (noTeam.length > 0) add('warning','Calendars',`${noTeam.length} calendars have no team members`,`Calendars without team members won\'t show availability or route bookings: ${noTeam.slice(0,2).map(c=>c.name).join(', ')}.`,'Assign at least one team member to each calendar. Check that the team member\'s schedule is configured correctly.');
-    const noConfirmWorkflow = !flows.some(w=>(w.name.toLowerCase().includes('confirm')||w.name.toLowerCase().includes('remind'))&&w.status==='published');
-    if (noConfirmWorkflow) add('critical','Calendars','No active appointment confirmation workflow','Calendars are set up but no published workflow sends confirmations or reminders. No-show rates will be high.','Create and publish an appointment workflow: booking confirmation email/SMS, 24hr reminder, 1hr reminder.');
-  }
-
-  // FORMS
-  if (forms.length === 0) add('critical','Forms','No forms created','No forms or surveys exist. Lead capture, intake, and feedback collection is manual or nonexistent.','Create at minimum: an intake/application form, a client onboarding form, and a feedback form.');
-  else {
-    const hasIntake = forms.some(f=>f.name.toLowerCase().includes('intake')||f.name.toLowerCase().includes('new client')||f.name.toLowerCase().includes('application')||f.name.toLowerCase().includes('introductory'));
-    const hasFeedback = forms.some(f=>f.name.toLowerCase().includes('feedback')||f.name.toLowerCase().includes('review')||f.name.toLowerCase().includes('testimonial'));
-    if (!hasIntake) add('warning','Forms','No intake or application form detected','Missing a new client intake form means you\'re collecting client information manually.','Create a new client intake form with key qualifying questions. Trigger an automation when it\'s submitted.');
-    if (!hasFeedback) add('suggestion','Forms','No feedback or review form','No form detected for collecting client testimonials or feedback — a missed opportunity for social proof.','Create a post-service feedback form and automate it to send after a client\'s final session.');
-  }
-
-  // EMAIL/SMS
-  const hasEmail = !!(loc.email||loc.settings?.communications?.email);
-  const hasPhone = !!(loc.phone||loc.settings?.communications?.phone);
-  const tz = loc.timezone||loc.settings?.timezone;
-  if (!hasEmail) add('critical','Settings','No sender email address configured','All outgoing emails from GHL will use a default address. This severely hurts deliverability and looks unprofessional.','Go to Settings → Business Info → Email and add your verified sender email address.');
-  if (!hasPhone) add('critical','Settings','No phone/SMS number configured','SMS workflows cannot send messages without a configured phone number. All SMS automation is broken.','Go to Settings → Phone Numbers and add or purchase a Twilio number for your location.');
-  if (!tz) add('warning','Settings','Timezone not configured','Without a timezone, scheduled workflows and appointments may fire at incorrect times.','Go to Settings → Business Info and set your account timezone.');
-
-  // CUSTOM VALUES
-  if (cvs.length < 5) add('warning','Custom Values','Very few custom values configured',`Only ${cvs.length} custom values found. Custom values are essential for dynamic content in emails, SMS, and workflows.`,'Set up custom values for: business name, phone, email signature, key links, calendar URLs, and form URLs.');
-  const hasBusinessInfo = cvs.some(v=>v.name.toLowerCase().includes('business name')||v.name.toLowerCase().includes('from email')||v.name.toLowerCase().includes('phone'));
-  if (!hasBusinessInfo && cvs.length > 0) add('suggestion','Custom Values','Business info custom values may be missing','Custom values for business contact details (name, phone, email) not detected. These should be referenced in all email templates.','Create custom values for business name, from email, phone number, and website. Use them in all email templates.');
-
-  // USERS
-  if (users.length === 0 && D.users?.ok) add('warning','Users','No users found in account','No team members are assigned to this location, which means calendars and internal notifications have no one to assign to.','Add team members to the sub-account and assign them to relevant calendars and pipelines.');
-
-  return issues;
-}
-
-// ─── Sections Builder ─────────────────────────────────────────
-function buildSections(D) {
-  const out = [];
-  const add = (id,name,icon,bg,score,checks,metric,metricVal,expert) =>
-    out.push({id,name,icon,bg,score,badge:score>=75?'pass':score>=45?'warn':'fail',checks,metric,metricVal,expert});
-
-  const flows = D.workflows?.ok?(D.workflows.d.workflows||[]):[];
-  const contacts = D.contacts?.ok?(D.contacts.d.contacts||[]):[];
-  const total = D.contacts?.ok?(D.contacts.d.total||contacts.length):0;
-  const pipes = D.pipelines?.ok?(D.pipelines.d.pipelines||[]):[];
-  const opps = D.opps?.ok?(D.opps.d.opportunities||[]):[];
-  const cals = D.calendars?.ok?(D.calendars.d.calendars||[]):[];
-  const forms = D.forms?.ok?(D.forms.d.forms||[]):[];
-  const cvs = D.customVals?.ok?(D.customVals.d.customValues||[]):[];
-  const cfs = D.customFields?.ok?(D.customFields.d.customFields||D.customFields.d||[]):[];
-  const tags = D.tags?.ok?(D.tags.d.tags||[]):[];
-  const users = D.users?.ok?(D.users.d.users||[]):[];
-  const loc = D.location?.ok?(D.location.d?.location||D.location.d||{}):{}; 
-
-  // 1. Workflows
-  {
-    let sc=100, ch=[];
-    if(!D.workflows?.ok){ch.push({s:'fail',t:`API error: ${D.workflows?.err||'Could not fetch'}`});sc=0;}
-    else {
-      const active=flows.filter(w=>w.status==='published').length;
-      const draft=flows.filter(w=>w.status==='draft').length;
-      const hasOnboard=flows.some(w=>w.name.toLowerCase().includes('onboard'));
-      const hasAppt=flows.some(w=>w.name.toLowerCase().includes('appoint')||w.name.toLowerCase().includes('confirm'));
-      const hasNurture=flows.some(w=>w.name.toLowerCase().includes('nurture')||w.name.toLowerCase().includes('follow'));
-      ch.push({s:'ok',t:`${flows.length} total workflows found`});
-      if(active>0)ch.push({s:'ok',t:`${active} workflows are published and active`});
-      else{ch.push({s:'fail',t:'No active workflows — all automation is paused'});sc-=40;}
-      if(draft>0){ch.push({s:'warn',t:`${draft} workflows stuck in draft state`});sc-=Math.min(draft*3,20);}
-      if(hasOnboard)ch.push({s:'ok',t:'Onboarding workflow detected ✓'});
-      else{ch.push({s:'fail',t:'No onboarding workflow found'});sc-=15;}
-      if(hasAppt)ch.push({s:'ok',t:'Appointment workflow detected ✓'});
-      else{ch.push({s:'fail',t:'No appointment confirmation workflow'});sc-=10;}
-      if(hasNurture)ch.push({s:'ok',t:'Lead nurture sequence detected ✓'});
-      else{ch.push({s:'warn',t:'No lead nurture/follow-up workflow'});sc-=10;}
-      const dupNames=flows.map(w=>w.name).filter((n,i,a)=>a.indexOf(n)!==i);
-      if(dupNames.length>0){ch.push({s:'warn',t:`Duplicate workflow names: ${[...new Set(dupNames)].slice(0,2).join(', ')}`});sc-=5;}
-    }
-    add('workflows','Automations & Workflows','⚡','#1e1e35',Math.max(0,sc),ch,'Active workflows',flows.filter(w=>w.status==='published').length,
-      `<b>Expert view:</b> ${flows.length===0?'Zero workflows is a critical gap — this account is running entirely manually.':flows.filter(w=>w.status==='published').length<5?'Very few active workflows. A mature account should have 15-30+ active automations covering the full client lifecycle.':flows.filter(w=>w.status==='published').length>=20?'Strong automation foundation. Ensure all workflows have proper triggers and are tested regularly.':'Moderate automation in place. Focus on filling lifecycle gaps: re-engagement, renewal, and feedback sequences.'}`);
-  }
-
-  // 2. Contacts & CRM
-  {
-    let sc=100, ch=[];
-    if(!D.contacts?.ok){ch.push({s:'fail',t:`API error: ${D.contacts?.err||'Could not fetch'}`});sc=0;}
-    else {
-      const ne=contacts.filter(c=>!c.email).length;
-      const np=contacts.filter(c=>!c.phone).length;
-      const nt=contacts.filter(c=>!c.tags||c.tags.length===0).length;
-      ch.push({s:'ok',t:`${total} total contacts in account`});
-      if(ne>0){ch.push({s:'warn',t:`${ne} contacts missing email (${total>0?Math.round(ne/total*100):0}%)`});sc-=Math.min(ne/Math.max(total,1)*40,20);}
-      else ch.push({s:'ok',t:'100% email coverage on fetched contacts'});
-      if(total>0&&np>total*.3){ch.push({s:'warn',t:`${np} contacts missing phone number`});sc-=10;}
-      else ch.push({s:'ok',t:'Good phone number coverage'});
-      if(total>5&&nt>total*.5){ch.push({s:'warn',t:`${nt} contacts have no tags — poor segmentation`});sc-=15;}
-      else if(total>0) ch.push({s:'ok',t:'Good tag usage for segmentation'});
-      if(total===0){ch=[{s:'warn',t:'No contacts found — verify this is the right account'}];sc=40;}
-    }
-    add('contacts','Contacts & CRM','👥','#1e2d1e',Math.max(0,sc),ch,'Total contacts',total,
-      `<b>Expert view:</b> ${total===0?'No contacts suggests either the wrong account or a brand new setup.':total<10?'Very few contacts. Ensure your lead capture forms are connected and working.':'Focus on data completeness. Missing emails and phones break automation. Tag every contact at every lifecycle stage for proper segmentation.'}`);
-  }
-
-  // 3. Pipelines & Opportunities
-  {
-    let sc=100, ch=[];
-    if(!D.pipelines?.ok){ch.push({s:'fail',t:`API error`});sc=0;}
-    else {
-      const stale=opps.filter(o=>{try{return(Date.now()-new Date(o.dateLastStatusChange||o.dateAdded))>30*864e5;}catch{return false;}}).length;
-      if(pipes.length===0){ch.push({s:'fail',t:'No pipelines configured'});sc-=50;}
-      else ch.push({s:'ok',t:`${pipes.length} pipeline(s) configured`});
-      if(pipes.length===1){ch.push({s:'warn',t:'Only 1 pipeline — leads and clients mixed together'});sc-=15;}
-      else if(pipes.length>=2) ch.push({s:'ok',t:'Multiple pipelines for proper segmentation'});
-      if(opps.length>0)ch.push({s:'ok',t:`${opps.length} active opportunities tracked`});
-      else{ch.push({s:'warn',t:'No active opportunities'});sc-=15;}
-      if(stale>0){ch.push({s:'warn',t:`${stale} opportunities stale (no movement >30 days)`});sc-=10;}
-      else if(opps.length>0) ch.push({s:'ok',t:'No stale opportunities detected'});
-    }
-    add('pipelines','Pipelines & Opportunities','📊','#1e1435',Math.max(0,sc),ch,'Pipelines',pipes.length,
-      `<b>Expert view:</b> ${pipes.length===0?'Missing pipelines means zero visibility into your sales funnel.':pipes.length===1?'A single pipeline is a common setup error. Leads and clients should be in separate pipelines to avoid clutter and reporting issues.':'Good pipeline structure. Ensure each stage has automation triggers and that opportunities are moved regularly.'}`);
-  }
-
-  // 4. Calendars & Appointments
-  {
-    let sc=100, ch=[];
-    if(!D.calendars?.ok){ch.push({s:'fail',t:'API error'});sc=0;}
-    else {
-      const noTeam=cals.filter(c=>!c.teamMembers||c.teamMembers.length===0).length;
-      const hasApptFlow=flows.some(w=>(w.name.toLowerCase().includes('confirm')||w.name.toLowerCase().includes('remind'))&&w.status==='published');
-      if(cals.length===0){ch.push({s:'fail',t:'No calendars configured'});sc=20;}
-      else ch.push({s:'ok',t:`${cals.length} calendar(s) configured`});
-      if(noTeam>0){ch.push({s:'warn',t:`${noTeam} calendar(s) have no team members assigned`});sc-=20;}
-      else if(cals.length>0) ch.push({s:'ok',t:'All calendars have team members assigned'});
-      if(hasApptFlow)ch.push({s:'ok',t:'Appointment confirmation/reminder workflow active ✓'});
-      else if(cals.length>0){ch.push({s:'fail',t:'No active appointment confirmation workflow!'});sc-=30;}
-      cals.forEach(c=>{if(c.isActive)ch.push({s:'ok',t:`"${c.name}" is active`});});
-    }
-    add('calendars','Calendars & Appointments','📅','#1f1535',Math.max(0,sc),ch,'Calendars',cals.length,
-      `<b>Expert view:</b> ${cals.length===0?'No calendars means clients cannot self-book. This is a critical gap for any service business.':'Calendar setup exists. The most common mistake is forgetting to connect booking workflows — without confirmation and reminder automations, no-show rates will be 30-50% higher.'}`);
-  }
-
-  // 5. Funnels & Websites
-  {
-    let sc=100, ch=[];
-    if(!D.funnels?.ok){ch.push({s:'info',t:`Funnels API requires funnels.readonly scope`});sc=50;}
-    else {
-      const funnels=D.funnels.d.funnels||[];
-      const pub=funnels.filter(f=>f.isPublished||f.type==='website').length;
-      if(funnels.length===0){ch.push({s:'warn',t:'No funnels or websites found'});sc=40;}
-      else ch.push({s:'ok',t:`${funnels.length} funnel/website(s) found`});
-      if(pub>0)ch.push({s:'ok',t:`${pub} published and live`});
-      else if(funnels.length>0){ch.push({s:'warn',t:'None of your funnels are published'});sc-=30;}
-      const hasOB=funnels.some(f=>f.name&&f.name.toLowerCase().includes('book'));
-      if(hasOB)ch.push({s:'ok',t:'Booking/appointment funnel detected'});
-      else if(funnels.length>0) ch.push({s:'warn',t:'No booking funnel detected'});
-    }
-    add('funnels','Funnels & Websites','🌐','#0f1f2d',Math.max(0,sc),D.funnels?.ok?(D.funnels.d.funnels||[]).length===0?[{s:'warn',t:'No funnels found'}]:[{s:'ok',t:`${(D.funnels.d.funnels||[]).length} funnels/sites found`}]:[{s:'info',t:'Funnels scope needed'}],'Funnels',D.funnels?.ok?(D.funnels.d.funnels||[]).length:'N/A',
-      `<b>Expert view:</b> Funnels are your lead capture front door. Every service business needs at minimum: a lead magnet/opt-in page, a booking page, and a thank-you/confirmation page with proper workflow triggers.`);
-  }
-
-  // 6. Forms & Surveys
-  {
-    let sc=100, ch=[];
-    if(!D.forms?.ok){ch.push({s:'fail',t:'API error'});sc=0;}
-    else {
-      const hasIntake=forms.some(f=>f.name.toLowerCase().includes('intake')||f.name.toLowerCase().includes('new client')||f.name.toLowerCase().includes('introductory'));
-      const hasFeedback=forms.some(f=>f.name.toLowerCase().includes('feedback')||f.name.toLowerCase().includes('review'));
-      if(forms.length===0){ch.push({s:'fail',t:'No forms created'});sc=10;}
-      else ch.push({s:'ok',t:`${forms.length} form/survey(s) created`});
-      if(hasIntake)ch.push({s:'ok',t:'Client intake/application form exists ✓'});
-      else if(forms.length>0){ch.push({s:'warn',t:'No intake or application form found'});sc-=20;}
-      if(hasFeedback)ch.push({s:'ok',t:'Feedback/review collection form exists ✓'});
-      else{ch.push({s:'warn',t:'No feedback or review form'});sc-=10;}
-      const surveys=forms.filter(f=>f.formType==='survey').length;
-      ch.push({s:surveys>0?'ok':'warn',t:surveys>0?`${surveys} survey(s) configured`:'No surveys configured (missed data collection opportunity)'});
-      if(surveys===0)sc-=5;
-    }
-    add('forms','Forms & Surveys','📋','#1f2d1e',Math.max(0,sc),ch,'Forms',forms.length,
-      `<b>Expert view:</b> ${forms.length===0?'No forms means manual data collection — a major efficiency gap.':'Ensure every form submission triggers a workflow. Orphaned forms (not connected to any automation) are a common GHL mistake that leads to lost leads.'}`);
-  }
-
-  // 7. Email/SMS Settings
-  {
-    let sc=100, ch=[];
-    if(!D.location?.ok){ch.push({s:'fail',t:'Could not fetch location settings'});sc=0;}
-    else {
-      const hasEmail=!!(loc.email||loc.settings?.communications?.email);
-      const hasPhone=!!(loc.phone||loc.settings?.communications?.phone);
-      const tz=loc.timezone||loc.settings?.timezone;
-      const hasName=!!(loc.name||loc.businessName);
-      if(!hasEmail){ch.push({s:'fail',t:'No sender email configured — email deliverability broken'});sc-=35;}
-      else ch.push({s:'ok',t:'Sender email address configured ✓'});
-      if(!hasPhone){ch.push({s:'fail',t:'No phone/SMS number — all SMS automation broken'});sc-=35;}
-      else ch.push({s:'ok',t:`Phone/SMS: ${loc.phone||'configured'} ✓`});
-      if(tz)ch.push({s:'ok',t:`Timezone: ${tz} ✓`});
-      else{ch.push({s:'warn',t:'No timezone set — scheduled sends may fire at wrong times'});sc-=15;}
-      if(hasName)ch.push({s:'ok',t:`Business name: "${loc.name||loc.businessName}" ✓`});
-      const hasAddress=!!(loc.address||loc.city);
-      if(!hasAddress){ch.push({s:'warn',t:'No business address (required for CAN-SPAM compliance)'});sc-=10;}
-      else ch.push({s:'ok',t:'Business address configured ✓'});
-    }
-    add('email','Email/SMS Settings','📧','#1f1f0d',Math.max(0,sc),ch,'Status',!!(loc.email||loc.settings?.communications?.email)&&!!(loc.phone||loc.settings?.communications?.phone)?'Fully configured':'Incomplete',
-      `<b>Expert view:</b> Email and SMS settings are the backbone of all GHL communication. Missing sender email causes deliverability issues — emails go to spam or fail entirely. Missing phone number breaks every SMS workflow silently.`);
-  }
-
-  // 8. Custom Fields & Values
-  {
-    let sc=100, ch=[];
-    const cfArr = Array.isArray(cfs)?cfs:[];
-    ch.push({s:cvs.length>0?'ok':'warn',t:`${cvs.length} custom values configured`});
-    if(cvs.length<5){ch.push({s:'warn',t:'Very few custom values — dynamic content in templates limited'});sc-=20;}
-    else if(cvs.length>=20) ch.push({s:'ok',t:'Rich custom values setup for dynamic templates ✓'});
-    ch.push({s:cfArr.length>0?'ok':'warn',t:`${cfArr.length} custom fields on contacts/opportunities`});
-    if(cfArr.length<5){ch.push({s:'warn',t:'Few custom fields — limited contact data tracking'});sc-=20;}
-    else if(cfArr.length>=15) ch.push({s:'ok',t:'Comprehensive custom fields for detailed tracking ✓'});
-    const hasOrgFolders=cvs.some(v=>v.folder||v.parentId);
-    if(cvs.length>10&&!hasOrgFolders){ch.push({s:'warn',t:'Custom values not organized in folders'});sc-=5;}
-    else if(cvs.length>5) ch.push({s:'ok',t:'Custom values appear organized ✓'});
-    add('customdata','Custom Fields & Values','🗂️','#1f1500',Math.max(0,sc),ch,'Total',`${cvs.length} values, ${cfArr.length} fields`,
-      `<b>Expert view:</b> Custom fields and values are the data infrastructure of your GHL account. Without them, email personalization is limited to first name. A well-built account should have custom fields for every key data point in the client journey.`);
-  }
-
-  // 9. Tags & Segmentation
-  {
-    let sc=100, ch=[];
-    if(!D.tags?.ok){ch.push({s:'info',t:'Tags data not available'});sc=50;}
-    else {
-      const lifecycle=['lead','new client','active','finished','cancelled','alumni','prospect'].filter(t=>tags.some(tag=>tag.name&&tag.name.toLowerCase().includes(t)));
-      ch.push({s:tags.length>0?'ok':'warn',t:`${tags.length} tags configured in account`});
-      if(tags.length<5){ch.push({s:'warn',t:'Very few tags — contact segmentation is limited'});sc-=25;}
-      else if(tags.length>=20) ch.push({s:'ok',t:'Robust tag library for segmentation ✓'});
-      if(lifecycle.length>0)ch.push({s:'ok',t:`Lifecycle tags found: ${lifecycle.join(', ')}`});
-      else{ch.push({s:'warn',t:'No client lifecycle tags detected (lead, active, finished, etc.)'});sc-=20;}
-      const hasPayment=tags.some(t=>t.name&&(t.name.toLowerCase().includes('paid')||t.name.toLowerCase().includes('payment')));
-      if(hasPayment)ch.push({s:'ok',t:'Payment-related tags present ✓'});
-      else{ch.push({s:'warn',t:'No payment tracking tags detected'});sc-=10;}
-    }
-    add('tags','Tags & Segmentation','🏷️','#1f0d1f',Math.max(0,sc),ch,'Tags',tags.length,
-      `<b>Expert view:</b> Tags are how GHL knows who to include in campaigns and who to exclude. Without lifecycle tags on every contact, you risk sending the wrong message to the wrong person — which causes unsubscribes and damages your reputation.`);
-  }
-
-  // 10. Team & Users
-  {
-    let sc=100, ch=[];
-    if(!D.users?.ok){ch.push({s:'info',t:'Users data requires users.readonly scope'});sc=50;}
-    else {
-      ch.push({s:users.length>0?'ok':'warn',t:`${users.length} user(s) in this sub-account`});
-      if(users.length===0){ch.push({s:'fail',t:'No users found — calendar assignments broken'});sc-=40;}
-      const admins=users.filter(u=>u.role==='admin'||u.roles?.includes('admin')).length;
-      if(admins>0)ch.push({s:'ok',t:`${admins} admin user(s) configured`});
-      const withCal=cals.filter(c=>c.teamMembers&&c.teamMembers.length>0).length;
-      if(cals.length>0){
-        if(withCal===cals.length)ch.push({s:'ok',t:'All calendars have assigned team members ✓'});
-        else{ch.push({s:'warn',t:`${cals.length-withCal} calendar(s) have no assigned team members`});sc-=15;}
+  // Animate steps while fetching
+  let stepIdx = 0;
+  const stepTimer = setInterval(() => {
+    if (stepIdx < STEPS.length - 1) {
+      if (stepIdx > 0) {
+        const prev = document.getElementById(`step-${STEPS[stepIdx - 1].key}`);
+        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); prev.querySelector('.step-icon').textContent = '✓'; }
       }
+      const curr = document.getElementById(`step-${STEPS[stepIdx].key}`);
+      if (curr) curr.classList.add('active');
+      stepIdx++;
     }
-    add('users','Team & Users','👤','#1f1f0d',Math.max(0,sc),ch,'Users',users.length,
-      `<b>Expert view:</b> Team configuration directly impacts calendar routing, internal notifications, and round-robin assignments. Always verify team members have the correct permissions and are assigned to the right calendars.`);
-  }
+  }, 900);
 
-  return out;
-}
-
-// ─── PDF Export ───────────────────────────────────────────────
-function exportPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const W=210, M=16;
-  let y=0;
-  const np = () => { doc.addPage(); y=18; };
-  const cy = (n) => { if(y+n>278) np(); };
-
-  // Header
-  doc.setFillColor(99,102,241);
-  doc.rect(0,0,W,32,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFont('helvetica','bold'); doc.setFontSize(18);
-  doc.text('GHL Expert Audit Report',M,13);
-  doc.setFont('helvetica','normal'); doc.setFontSize(9);
-  doc.text(`${auditMeta.locName}   ·   ${auditMeta.date}`,M,22);
-  doc.text(`Overall Score: ${auditMeta.score}/100`,W-M-40,22);
-  y=42;
-
-  // Score block
-  const sc=auditMeta.score;
-  const scCol=sc>=75?[34,197,94]:sc>=50?[245,158,11]:[239,68,68];
-  doc.setFillColor(...scCol);
-  doc.roundedRect(M,y,55,26,3,3,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFont('helvetica','bold'); doc.setFontSize(28);
-  doc.text(`${sc}`,M+8,y+18);
-  doc.setFontSize(11); doc.text('/100',M+28,y+18);
-  doc.setFontSize(14); doc.setTextColor(30,30,46);
-  doc.text(sc>=80?'Excellent Health':sc>=65?'Good — Some Gaps':sc>=50?'Needs Attention':'Action Required',M+62,y+10);
-  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,139);
-  const desc = document.getElementById('rdesc').textContent;
-  const descLines = doc.splitTextToSize(desc,W-M*2-65);
-  doc.text(descLines.slice(0,2),M+62,y+18);
-  y+=36;
-
-  // Expert Summary
-  cy(30);
-  doc.setFillColor(30,30,53);
-  doc.roundedRect(M,y,W-M*2,25,3,3,'F');
-  doc.setTextColor(165,180,252);
-  doc.setFont('helvetica','bold'); doc.setFontSize(10);
-  doc.text('Expert Analysis',M+4,y+8);
-  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(199,210,254);
-  const sumText = document.getElementById('expertSummaryText').textContent;
-  const sumLines = doc.splitTextToSize(sumText,W-M*2-10);
-  doc.text(sumLines.slice(0,3),M+4,y+15);
-  y+=32;
-
-  // Critical Issues
-  cy(20);
-  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(30,30,46);
-  doc.text('Priority Issues',M,y); y+=8;
-
-  allIssues.slice(0,12).forEach(issue => {
-    cy(22);
-    const bgC = issue.level==='critical'?[127,29,29]:issue.level==='warning'?[120,53,15]:[30,30,53];
-    const txtC = issue.level==='critical'?[252,165,165]:issue.level==='warning'?[253,230,138]:[165,180,252];
-    doc.setFillColor(...bgC); doc.roundedRect(M,y,W-M*2,18,2,2,'F');
-    doc.setTextColor(...txtC); doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
-    doc.text(`[${issue.level.toUpperCase()}] ${issue.section}: ${issue.title}`,M+3,y+6);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(200,200,200);
-    const dLines=doc.splitTextToSize(issue.desc,W-M*2-8);
-    doc.text(dLines[0]||'',M+3,y+11);
-    doc.setTextColor(165,180,252);
-    const fLines=doc.splitTextToSize('Fix: '+issue.fix,W-M*2-8);
-    doc.text(fLines[0]||'',M+3,y+16);
-    y+=21;
-  });
-
-  // Section Results
-  np();
-  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(30,30,46);
-  doc.text('Section Analysis',M,y); y+=8;
-
-  auditSections.forEach(s => {
-    cy(40);
-    const bCol=s.badge==='pass'?[34,197,94]:s.badge==='warn'?[234,179,8]:[239,68,68];
-    doc.setFillColor(240,242,255); doc.roundedRect(M,y,W-M*2,10,2,2,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(30,30,46);
-    doc.text(`${s.icon}  ${s.name}`,M+3,y+7);
-    doc.setFillColor(...bCol); doc.roundedRect(W-M-24,y+2,24,6,2,2,'F');
-    doc.setTextColor(255,255,255); doc.setFontSize(8);
-    doc.text(s.badge==='pass'?'PASS':s.badge==='warn'?'WARNING':'FAIL',W-M-23,y+6.5);
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
-    doc.text(`Score: ${s.score}/100`,M+60,y+7);
-    y+=13;
-    s.checks.forEach(c => {
-      cy(7);
-      const dC=c.s==='ok'?[34,197,94]:c.s==='warn'?[234,179,8]:[239,68,68];
-      doc.setFillColor(...dC); doc.circle(M+4,y+2,1.5,'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(71,85,105);
-      doc.text(c.t.slice(0,95),M+9,y+3.5);
-      y+=6.5;
+  try {
+    const res  = await fetch('/api/audit', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token, locationId })
     });
-    cy(12);
-    doc.setFillColor(230,232,255); doc.roundedRect(M,y,W-M*2,10,2,2,'F');
-    doc.setFont('helvetica','italic'); doc.setFontSize(7.5); doc.setTextColor(79,70,229);
-    const expertText=s.expert.replace(/<[^>]+>/g,'');
-    const eLines=doc.splitTextToSize(expertText,W-M*2-8);
-    doc.text(eLines[0]||'',M+3,y+4); if(eLines[1]) doc.text(eLines[1],M+3,y+8);
-    y+=14;
-  });
+    const data = await res.json();
+    clearInterval(stepTimer);
 
-  // Footer
-  const pages=doc.internal.getNumberOfPages();
-  for(let i=1;i<=pages;i++){
-    doc.setPage(i);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(148,163,184);
-    doc.text(`GHL Expert Audit · ${auditMeta.locName} · Page ${i} of ${pages}`,M,293);
-    doc.text('Confidential — generated by GHL Expert Audit Tool',W-M-75,293);
+    // Mark all done
+    STEPS.forEach(s => {
+      const el = document.getElementById(`step-${s.key}`);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); el.querySelector('.step-icon').textContent = '✓'; }
+    });
+
+    auditData = data;
+    setTimeout(() => renderDashboard(data), 600);
+  } catch (err) {
+    clearInterval(stepTimer);
+    alert('Error running audit: ' + err.message);
+    resetAudit();
   }
-
-  doc.save(`GHL-Expert-Audit-${auditMeta.locName.replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
-function resetApp() {
-  auditResult={}; auditMeta={}; auditSections=[]; allIssues=[];
-  document.getElementById('resultsScreen').style.display='none';
-  document.getElementById('inputScreen').style.display='block';
-  document.getElementById('runBtn').disabled=false;
+function renderDashboard(data) {
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('dashboard').style.display     = 'block';
+
+  const s    = data.overallScore;
+  const loc  = data.sections?.settings?.location || {};
+  document.getElementById('loc-name').textContent    = loc.name || 'Sub-Account';
+  document.getElementById('audit-time').textContent  = 'Audit generated: ' + new Date().toLocaleString();
+  document.getElementById('score-big').textContent   = s + '/100';
+  document.getElementById('score-big').className     = 'score-big ' + scoreClass(s);
+  document.getElementById('score-label').textContent = scoreLabel(s);
+  document.getElementById('expert-summary').textContent = expertSummary(data);
+
+  // Stats row
+  const wf  = data.sections?.workflows?.stats   || {};
+  const cts = data.sections?.contacts?.stats    || {};
+  const pip = data.sections?.pipelines?.stats   || {};
+  const cal = data.sections?.calendars?.stats   || {};
+  const frm = data.sections?.forms?.stats       || {};
+  document.getElementById('stats-row').innerHTML = [
+    { num: cts.total     ?? '?', lbl: 'Contacts'    },
+    { num: wf.active     ?? '?', lbl: 'Active Flows' },
+    { num: wf.draft      ?? '?', lbl: 'Draft Flows'  },
+    { num: pip.pipelines ?? '?', lbl: 'Pipelines'    },
+    { num: cal.total     ?? '?', lbl: 'Calendars'    },
+    { num: frm.forms     ?? '?', lbl: 'Forms'        },
+  ].map(x => `<div class="stat-card"><div class="stat-num">${x.num}</div><div class="stat-lbl">${x.lbl}</div></div>`).join('');
+
+  // Issues
+  const issues = data.allIssues || [];
+  document.getElementById('issues-list').innerHTML = issues.length === 0
+    ? '<p style="color:#4ade80;text-align:center;padding:20px">✅ No critical or warning issues found!</p>'
+    : issues.map(issue => `
+        <div class="issue-card ${issue.severity}">
+          <div class="issue-top">
+            <span class="badge ${issue.severity}">${issue.severity}</span>
+            <span class="issue-title">${SECTION_META[issue.section]?.label || issue.section}: ${issue.title}</span>
+          </div>
+          <div class="issue-detail">${issue.detail}</div>
+          <div class="issue-fix">${issue.fix}</div>
+        </div>
+      `).join('');
+
+  // Section cards
+  document.getElementById('sections-grid').innerHTML = Object.entries(data.sections).map(([key, sec]) => {
+    const meta  = SECTION_META[key] || { label: key, icon: '•' };
+    const color = scoreColor(sec.score);
+    return `
+      <div class="section-card">
+        <div class="sc-header">
+          <span class="sc-name">${meta.icon} ${meta.label}</span>
+          <span class="sc-score" style="color:${color}">${sec.score}/100</span>
+        </div>
+        <div class="sc-bar-bg"><div class="sc-bar" style="width:${sec.score}%;background:${color}"></div></div>
+        <div class="sc-expert">${sec.expert}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Benchmarks
+  const bmarks = [
+    { label: 'Workflow automation',   val: data.sections.workflows?.score    ?? 0 },
+    { label: 'CRM data quality',      val: data.sections.contacts?.score     ?? 0 },
+    { label: 'Pipeline setup',        val: data.sections.pipelines?.score    ?? 0 },
+    { label: 'Calendar & booking',    val: data.sections.calendars?.score    ?? 0 },
+    { label: 'Forms & surveys',       val: data.sections.forms?.score        ?? 0 },
+    { label: 'Email & SMS settings',  val: data.sections.settings?.score     ?? 0 },
+    { label: 'Funnels & websites',    val: data.sections.funnels?.score      ?? 0 },
+    { label: 'Custom values setup',   val: data.sections.customValues?.score ?? 0 },
+  ];
+  document.getElementById('benchmarks').innerHTML = bmarks.map(b => `
+    <div class="bench-row">
+      <div class="bench-label">${b.label}</div>
+      <div class="bench-bar-bg"><div class="bench-bar" style="width:${b.val}%;background:${scoreColor(b.val)}"></div></div>
+      <div class="bench-val" style="color:${scoreColor(b.val)}">${b.val}%</div>
+    </div>
+  `).join('');
+}
+
+function resetAudit() {
+  document.getElementById('login-wrap').style.display    = 'flex';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('dashboard').style.display     = 'none';
+}
+
+function exportPDF() {
+  if (!auditData) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  const addPage = () => { doc.addPage(); y = 20; };
+  const checkY  = (h) => { if (y + h > 270) addPage(); };
+  const text    = (t, x, size, style, color) => {
+    doc.setFontSize(size || 11);
+    doc.setFont('helvetica', style || 'normal');
+    doc.setTextColor(...(color || [30, 30, 30]));
+    doc.text(String(t), x, y);
+  };
+
+  // Cover
+  doc.setFillColor(15, 17, 23);
+  doc.rect(0, 0, pw, 297, 'F');
+  y = 70;
+  text('GHL Expert Audit Report', pw / 2, 24, 'bold', [200, 184, 255]);
+  doc.setTextColor(200, 184, 255);
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  doc.text('GHL Expert Audit Report', pw / 2, y, { align: 'center' });
+  y += 12;
+  doc.setFontSize(13); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
+  const loc = auditData.sections?.settings?.location || {};
+  doc.text(loc.name || 'Sub-Account', pw / 2, y, { align: 'center' });
+  y += 8;
+  doc.text(new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), pw / 2, y, { align: 'center' });
+  y += 20;
+  doc.setFontSize(60); doc.setFont('helvetica', 'bold');
+  const sc = auditData.overallScore;
+  doc.setTextColor(sc >= 75 ? 74 : sc >= 45 ? 251 : 248, sc >= 75 ? 222 : sc >= 45 ? 191 : 113, sc >= 75 ? 128 : sc >= 45 ? 36 : 113);
+  doc.text(`${sc}/100`, pw / 2, y, { align: 'center' });
+  y += 12;
+  doc.setFontSize(14); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
+  doc.text(scoreLabel(sc).replace(/🏆|✅|⚠️|🚨/g, '').trim(), pw / 2, y, { align: 'center' });
+
+  // Summary page
+  doc.addPage(); y = 20;
+  doc.setFillColor(26, 29, 39); doc.rect(0, 0, pw, 297, 'F');
+  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
+  doc.text('Expert Analysis', 15, y); y += 10;
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
+  const summaryLines = doc.splitTextToSize(expertSummary(auditData), pw - 30);
+  doc.text(summaryLines, 15, y); y += summaryLines.length * 5 + 10;
+
+  // Issues
+  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
+  doc.text('Priority Issues', 15, y); y += 8;
+  for (const issue of auditData.allIssues || []) {
+    checkY(28);
+    const color = issue.severity === 'critical' ? [248, 113, 113] : issue.severity === 'warning' ? [251, 191, 36] : [96, 165, 250];
+    doc.setFillColor(...color);
+    doc.rect(15, y - 4, 3, 18, 'F');
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...color);
+    doc.text(issue.severity.toUpperCase(), 21, y);
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(226, 232, 240);
+    doc.text(`${SECTION_META[issue.section]?.label || issue.section}: ${issue.title}`, 21, y + 5);
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
+    const detLines = doc.splitTextToSize(issue.detail, pw - 36);
+    doc.text(detLines, 21, y + 10);
+    doc.setTextColor(167, 139, 250);
+    const fixLines = doc.splitTextToSize('Fix: ' + issue.fix, pw - 36);
+    doc.text(fixLines, 21, y + 10 + detLines.length * 4);
+    y += 10 + detLines.length * 4 + fixLines.length * 4 + 6;
+  }
+
+  // Section scores
+  doc.addPage(); y = 20;
+  doc.setFillColor(26, 29, 39); doc.rect(0, 0, pw, 297, 'F');
+  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
+  doc.text('Section Analysis', 15, y); y += 10;
+  for (const [key, sec] of Object.entries(auditData.sections || {})) {
+    checkY(22);
+    const meta  = SECTION_META[key] || { label: key };
+    const color = sec.score >= 75 ? [74, 222, 128] : sec.score >= 45 ? [251, 191, 36] : [248, 113, 113];
+    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(226, 232, 240);
+    doc.text(meta.label, 15, y);
+    doc.setTextColor(...color);
+    doc.text(`${sec.score}/100`, pw - 15, y, { align: 'right' });
+    y += 5;
+    doc.setFillColor(30, 34, 53); doc.rect(15, y, pw - 30, 4, 'F');
+    doc.setFillColor(...color); doc.rect(15, y, (pw - 30) * (sec.score / 100), 4, 'F');
+    y += 7;
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
+    const expertLines = doc.splitTextToSize(sec.expert || '', pw - 30);
+    doc.text(expertLines, 15, y);
+    y += expertLines.length * 4 + 6;
+  }
+
+  doc.save(`GHL-Expert-Audit-${(loc.name || 'Account').replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 </script>
 </body>
