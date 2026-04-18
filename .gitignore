@@ -1,18 +1,9 @@
-# Dependencies
 node_modules/
-
-# Environment variables — NEVER push this to GitHub
 .env
-
-# Logs
 logs/
 *.log
 npm-debug.log*
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Editor folders
 .vscode/
 .idea/
