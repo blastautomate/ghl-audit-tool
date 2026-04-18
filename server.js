@@ -14,7 +14,7 @@ async function ghlGet(token, endpoint) {
   const url = `${BASE}${endpoint}`;
   const res = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': token,
       'Version': '2021-07-28',
       'Content-Type': 'application/json'
     }
