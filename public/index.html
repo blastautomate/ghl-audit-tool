@@ -8,460 +8,480 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
-.page{max-width:960px;margin:0 auto;padding:32px 20px}
-
-/* ── Login ── */
+.page{max-width:1100px;margin:0 auto;padding:32px 20px}
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
-.login-card{background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:40px;width:100%;max-width:460px}
-.login-logo{font-size:28px;font-weight:700;color:#7c6af5;margin-bottom:6px}
-.login-sub{color:#8892a4;font-size:14px;margin-bottom:32px}
-label{display:block;font-size:13px;color:#8892a4;margin-bottom:6px;font-weight:500}
-input{width:100%;background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:12px 14px;color:#e2e8f0;font-size:14px;outline:none;transition:border .2s}
+.login-card{background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:40px;width:100%;max-width:480px}
+.login-logo{font-size:26px;font-weight:700;color:#7c6af5;margin-bottom:4px}
+.login-sub{color:#8892a4;font-size:13px;margin-bottom:28px}
+label{display:block;font-size:12px;color:#8892a4;margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+input{width:100%;background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:11px 13px;color:#e2e8f0;font-size:14px;outline:none;transition:border .2s}
 input:focus{border-color:#7c6af5}
-.btn{width:100%;background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;transition:opacity .2s}
-.btn:hover{opacity:.9}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.hint{font-size:12px;color:#5a6275;margin-top:8px}
-
-/* ── Progress ── */
-#progress-wrap{display:none;background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:32px;margin-top:32px}
-.prog-title{font-size:18px;font-weight:600;margin-bottom:20px;color:#c8b8ff}
+.inp-group{margin-bottom:16px}
+.hint{font-size:11px;color:#5a6275;margin-top:5px}
+.btn-primary{width:100%;background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;transition:opacity .2s}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+#progress-wrap{display:none;background:#1a1d27;border:1px solid #2d3148;border-radius:16px;padding:32px;margin-top:32px;max-width:480px;margin-left:auto;margin-right:auto}
+.prog-title{font-size:16px;font-weight:600;margin-bottom:16px;color:#c8b8ff}
 .steps{list-style:none}
-.step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1e2235;font-size:14px;color:#8892a4;transition:color .3s}
+.step{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1e2235;font-size:13px;color:#8892a4}
 .step:last-child{border-bottom:none}
-.step.done{color:#4ade80}
-.step.active{color:#e2e8f0;font-weight:500}
-.step.error{color:#f87171}
-.step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:#1e2235}
-.step.done .step-icon{background:#166534;color:#4ade80}
-.step.active .step-icon{background:#3730a3;color:#c8b8ff;animation:pulse 1s infinite}
-.step.error .step-icon{background:#7f1d1d;color:#f87171}
+.step.done{color:#4ade80}.step.active{color:#e2e8f0;font-weight:500}.step.error{color:#f87171}
+.step-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:#1e2235}
+.step.done .step-icon{background:#166534;color:#4ade80}.step.active .step-icon{background:#3730a3;color:#c8b8ff;animation:pulse 1s infinite}.step.error .step-icon{background:#7f1d1d;color:#f87171}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-
-/* ── Dashboard ── */
 #dashboard{display:none}
-.score-hero{background:linear-gradient(135deg,#1a1d27,#1e1b35);border:1px solid #2d3148;border-radius:16px;padding:36px;text-align:center;margin-bottom:28px}
-.score-big{font-size:80px;font-weight:800;line-height:1;margin-bottom:8px}
-.score-label{font-size:20px;font-weight:600;margin-bottom:12px}
-.score-desc{color:#8892a4;font-size:14px;max-width:500px;margin:0 auto}
-.great{color:#4ade80} .warn{color:#fbbf24} .bad{color:#f87171}
-
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:28px}
-.stat-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:18px;text-align:center}
-.stat-num{font-size:28px;font-weight:700;color:#c8b8ff}
-.stat-lbl{font-size:12px;color:#8892a4;margin-top:4px}
-
-/* ── Issues ── */
-.section-title{font-size:18px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.issues-list{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
-.issue-card{background:#1a1d27;border-left:4px solid;border-radius:0 10px 10px 0;padding:16px 18px}
-.issue-card.critical{border-color:#f87171}
-.issue-card.warning{border-color:#fbbf24}
-.issue-card.suggestion{border-color:#60a5fa}
-.issue-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
-.badge.critical{background:#7f1d1d;color:#fca5a5}
-.badge.warning{background:#78350f;color:#fde68a}
-.badge.suggestion{background:#1e3a5f;color:#93c5fd}
-.issue-title{font-size:14px;font-weight:600;color:#e2e8f0}
-.issue-section{font-size:12px;color:#5a6275;margin-left:auto}
-.issue-detail{font-size:13px;color:#8892a4;margin-bottom:6px}
-.issue-fix{font-size:13px;color:#a78bfa}
-.issue-fix::before{content:"→ Fix: ";font-weight:600}
-
-/* ── Sections Grid ── */
-.sections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px}
-.section-card{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:20px}
-.sc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.sc-name{font-size:14px;font-weight:600}
-.sc-score{font-size:22px;font-weight:700}
-.sc-bar-bg{background:#0f1117;border-radius:99px;height:6px;margin-bottom:10px;overflow:hidden}
-.sc-bar{height:6px;border-radius:99px;transition:width .8s ease}
-.sc-expert{font-size:12px;color:#8892a4;line-height:1.5}
-
-/* ── Benchmarks ── */
-.benchmarks{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;padding:24px;margin-bottom:32px}
-.bench-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #1e2235}
-.bench-row:last-child{border-bottom:none}
-.bench-label{font-size:13px;color:#8892a4;width:200px;flex-shrink:0}
-.bench-bar-bg{flex:1;background:#0f1117;border-radius:99px;height:8px;overflow:hidden}
-.bench-bar{height:8px;border-radius:99px}
-.bench-val{font-size:13px;font-weight:600;width:50px;text-align:right;flex-shrink:0}
-
-/* ── PDF Button ── */
-.pdf-btn{background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;margin:0 auto 40px}
-.pdf-btn:hover{opacity:.9}
-
-/* ── Responsive ── */
-@media(max-width:600px){.score-big{font-size:56px}.stats-row{grid-template-columns:repeat(2,1fr)}}
+.score-hero{background:linear-gradient(135deg,#1a1d27,#1e1b35);border:1px solid #2d3148;border-radius:16px;padding:32px;text-align:center;margin-bottom:24px}
+.score-big{font-size:72px;font-weight:800;line-height:1;margin-bottom:6px}
+.score-label{font-size:18px;font-weight:600;margin-bottom:10px}
+.score-desc{color:#8892a4;font-size:13px;max-width:600px;margin:0 auto}
+.great{color:#4ade80}.warn{color:#fbbf24}.bad{color:#f87171}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:#1a1d27;border:1px solid #2d3148;border-radius:10px;padding:16px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;color:#c8b8ff}
+.stat-lbl{font-size:11px;color:#8892a4;margin-top:3px}
+.section-title{font-size:16px;font-weight:600;margin-bottom:14px;margin-top:28px;color:#e2e8f0;display:flex;align-items:center;gap:8px}
+.issues-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.issue-card{background:#1a1d27;border-left:3px solid;border-radius:0 8px 8px 0;padding:14px 16px}
+.issue-card.critical{border-color:#f87171}.issue-card.warning{border-color:#fbbf24}.issue-card.suggestion{border-color:#60a5fa}
+.issue-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;margin-top:2px}
+.badge.critical{background:#7f1d1d;color:#fca5a5}.badge.warning{background:#78350f;color:#fde68a}.badge.suggestion{background:#1e3a5f;color:#93c5fd}
+.issue-title{font-size:13px;font-weight:600;color:#e2e8f0}
+.issue-detail{font-size:12px;color:#8892a4;margin-bottom:5px;line-height:1.5}
+.issue-fix{font-size:12px;color:#a78bfa;line-height:1.5}
+.issue-fix::before{content:"Fix: ";font-weight:600}
+.deep-section{background:#1a1d27;border:1px solid #2d3148;border-radius:12px;margin-bottom:16px;overflow:hidden}
+.deep-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;user-select:none;border-bottom:1px solid #1e2235}
+.deep-header:hover{background:#1e2235}
+.deep-header-left{display:flex;align-items:center;gap:12px}
+.deep-icon{font-size:18px}
+.deep-name{font-size:15px;font-weight:600}
+.deep-expert{font-size:12px;color:#8892a4;margin-top:2px;max-width:600px}
+.deep-score{font-size:20px;font-weight:700;flex-shrink:0}
+.deep-body{display:none;padding:0 20px 20px}
+.deep-body.open{display:block}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:16px}
+.detail-card{background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:14px}
+.detail-name{font-size:13px;font-weight:600;color:#c8b8ff;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.detail-status{font-size:10px;padding:2px 6px;border-radius:10px;font-weight:600}
+.status-active{background:#166534;color:#4ade80}
+.status-draft{background:#78350f;color:#fde68a}
+.status-unknown{background:#1e2235;color:#8892a4}
+.detail-meta{font-size:11px;color:#8892a4;margin-bottom:8px;line-height:1.6}
+.detail-issue{font-size:11px;color:#f87171;background:#7f1d1d22;border-radius:4px;padding:4px 8px;margin-top:4px}
+.detail-note{font-size:11px;color:#93c5fd;background:#1e3a5f22;border-radius:4px;padding:4px 8px;margin-top:4px}
+.score-bar-wrap{margin-top:8px}
+.score-bar-bg{background:#0f1117;border-radius:99px;height:5px;overflow:hidden}
+.score-bar{height:5px;border-radius:99px}
+.btn-bar{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.btn-secondary{background:#1a1d27;border:1px solid #2d3148;color:#c8b8ff;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:background .2s}
+.btn-secondary:hover{background:#1e2235}
+.btn-export{background:linear-gradient(135deg,#7c6af5,#5b4fe0);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+.btn-export:hover{opacity:.9}
+.tag-pill{display:inline-block;background:#1e2235;color:#c8b8ff;font-size:10px;padding:2px 8px;border-radius:10px;margin:2px}
+.sub-title{font-size:11px;font-weight:700;color:#5a6275;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-wrap" id="login-wrap">
   <div class="login-card">
     <div class="login-logo">GHL Expert Audit</div>
-    <div class="login-sub">Deep health check & expert analysis for any sub-account</div>
-    <div style="margin-bottom:18px">
+    <div class="login-sub">Deep internal analysis of every workflow, form, calendar, and field</div>
+    <div class="inp-group">
       <label>Private Integration Token</label>
       <input type="password" id="token" placeholder="pit-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-      <div class="hint">Settings → Private Integrations → Create token with all readonly scopes</div>
+      <div class="hint">Settings > Private Integrations > Create token with all readonly scopes</div>
     </div>
-    <div>
+    <div class="inp-group">
       <label>Location ID</label>
       <input type="text" id="locationId" placeholder="Paste your Location ID here">
-      <div class="hint">Settings → Business Info → scroll to the bottom to find Location ID</div>
+      <div class="hint">Settings > Business Info > scroll to bottom for Location ID</div>
     </div>
-    <button class="btn" id="run-btn" onclick="runAudit()">Run Full Expert Audit</button>
+    <button class="btn-primary" id="run-btn" onclick="runAudit()">Run Deep Expert Audit</button>
   </div>
 </div>
 
-<!-- PROGRESS -->
-<div class="page" id="progress-wrap">
-  <div class="prog-title">🔍 Auditing your account…</div>
+<div style="display:flex;justify-content:center;padding:32px 20px" id="progress-outer" style="display:none">
+<div id="progress-wrap">
+  <div class="prog-title">Running deep audit...</div>
   <ul class="steps" id="steps-list"></ul>
 </div>
+</div>
 
-<!-- DASHBOARD -->
 <div class="page" id="dashboard">
-
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
     <div>
-      <div style="font-size:24px;font-weight:700" id="loc-name">Account Audit</div>
-      <div style="font-size:13px;color:#8892a4" id="audit-time"></div>
+      <div style="font-size:22px;font-weight:700" id="loc-name">Account Audit</div>
+      <div style="font-size:12px;color:#8892a4" id="audit-time"></div>
     </div>
-    <button onclick="resetAudit()" style="background:#1a1d27;border:1px solid #2d3148;color:#8892a4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px">← New Audit</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="resetAudit()">New Audit</button>
+      <button class="btn-export" onclick="exportPDF()">Download PDF Report</button>
+    </div>
   </div>
 
-  <!-- Score Hero -->
   <div class="score-hero">
-    <div class="score-big" id="score-big">—</div>
-    <div class="score-label" id="score-label">Analysing…</div>
+    <div class="score-big" id="score-big">--</div>
+    <div class="score-label" id="score-label"></div>
     <div class="score-desc" id="expert-summary"></div>
   </div>
 
-  <!-- Stats -->
   <div class="stats-row" id="stats-row"></div>
 
-  <!-- Priority Issues -->
-  <div class="section-title">⚠️ Priority Issues</div>
+  <div class="section-title">Priority Issues</div>
   <div class="issues-list" id="issues-list"></div>
 
-  <!-- Section Cards -->
-  <div class="section-title">📋 Section Analysis</div>
-  <div class="sections-grid" id="sections-grid"></div>
-
-  <!-- Benchmarks -->
-  <div class="section-title">📊 Benchmarks vs Best Practice</div>
-  <div class="benchmarks" id="benchmarks"></div>
-
-  <!-- PDF Export -->
-  <button class="pdf-btn" onclick="exportPDF()">⬇️ Download Expert Report PDF</button>
-
+  <div class="section-title">Deep Section Analysis <span style="font-size:12px;color:#5a6275;font-weight:400">(click any section to expand)</span></div>
+  <div id="sections-wrap"></div>
 </div>
 
 <script>
-const SECTION_META = {
-  workflows:    { label: 'Automations & Workflows', icon: '⚡' },
-  contacts:     { label: 'Contacts & CRM',          icon: '👥' },
-  pipelines:    { label: 'Pipelines & Opportunities',icon: '🔁' },
-  calendars:    { label: 'Calendars & Appointments', icon: '📅' },
-  forms:        { label: 'Forms & Surveys',          icon: '📋' },
-  settings:     { label: 'Email / SMS Settings',     icon: '📡' },
-  customValues: { label: 'Custom Fields & Values',   icon: '🗂️' },
-  funnels:      { label: 'Funnels & Websites',       icon: '🌐' },
+var auditData = null;
+
+var SECTION_META = {
+  settings:     { label: 'Email / SMS Settings',      icon: 'S' },
+  contacts:     { label: 'Contacts & CRM',             icon: 'C' },
+  pipelines:    { label: 'Pipelines & Opportunities',  icon: 'P' },
+  workflows:    { label: 'Automations & Workflows',    icon: 'W' },
+  calendars:    { label: 'Calendars & Appointments',   icon: 'K' },
+  forms:        { label: 'Forms & Surveys',            icon: 'F' },
+  customValues: { label: 'Custom Values',              icon: 'V' },
+  customFields: { label: 'Custom Fields',              icon: 'D' },
+  funnels:      { label: 'Funnels & Websites',         icon: 'N' }
 };
 
-const STEPS = [
-  { key: 'settings',     label: 'Location & Settings' },
+var STEPS = [
+  { key: 'settings',     label: 'Location settings' },
   { key: 'contacts',     label: 'Contacts & CRM' },
-  { key: 'pipelines',    label: 'Pipelines & Opportunities' },
-  { key: 'workflows',    label: 'Automations & Workflows' },
-  { key: 'calendars',    label: 'Calendars & Appointments' },
-  { key: 'forms',        label: 'Forms & Surveys' },
-  { key: 'customValues', label: 'Custom Fields & Values' },
-  { key: 'funnels',      label: 'Funnels & Websites' },
-  { key: 'done',         label: 'Building Expert Report' },
+  { key: 'pipelines',    label: 'Pipelines & opportunities' },
+  { key: 'workflows',    label: 'All workflows (deep analysis)' },
+  { key: 'calendars',    label: 'Calendars & booking' },
+  { key: 'forms',        label: 'Forms & surveys' },
+  { key: 'customValues', label: 'Custom values' },
+  { key: 'customFields', label: 'Custom fields' },
+  { key: 'funnels',      label: 'Funnels & websites' }
 ];
 
-let auditData = null;
+function scoreColor(s) { return s >= 75 ? '#4ade80' : s >= 45 ? '#fbbf24' : '#f87171'; }
+function scoreClass(s) { return s >= 75 ? 'great' : s >= 45 ? 'warn' : 'bad'; }
+function scoreLabel(s) { return s >= 85 ? 'Excellent Health' : s >= 70 ? 'Great Health' : s >= 50 ? 'Needs Attention' : 'Action Required'; }
 
-function scoreColor(s) {
-  if (s >= 75) return '#4ade80';
-  if (s >= 45) return '#fbbf24';
-  return '#f87171';
-}
-function scoreClass(s) {
-  if (s >= 75) return 'great';
-  if (s >= 45) return 'warn';
-  return 'bad';
-}
-function scoreLabel(s) {
-  if (s >= 85) return '🏆 Excellent Health';
-  if (s >= 70) return '✅ Great Health';
-  if (s >= 50) return '⚠️ Needs Attention';
-  return '🚨 Action Required';
-}
-
-function expertSummary(data) {
-  const score   = data.overallScore;
-  const crits   = data.allIssues.filter(i => i.severity === 'critical').length;
-  const warns   = data.allIssues.filter(i => i.severity === 'warning').length;
-  const wf      = data.sections.workflows?.stats || {};
-  const cts     = data.sections.contacts?.stats  || {};
-  const pipes   = data.sections.pipelines?.stats || {};
-
-  let summary = `After analyzing this GHL sub-account, here is the expert assessment: `;
-  if (wf.active === 0) summary += `Automation is underdeveloped with only 0 active workflows — this is a significant gap for a production GHL account. `;
-  else if (wf.active < 5) summary += `Automation is limited with only ${wf.active} active workflows — key client journey flows are likely missing. `;
-  else summary += `Automation is solid with ${wf.active} active workflows covering key client touchpoints. `;
-
-  if (pipes.pipelines < 2) summary += `Pipeline setup is minimal — a mature account should have separate pipelines for leads, onboarding, and renewals. `;
-  else summary += `Pipeline structure looks reasonable with ${pipes.pipelines} pipeline(s) configured. `;
-
-  if (crits > 0) summary += `With ${crits} critical issue${crits > 1 ? 's' : ''}, this account needs immediate systematic attention before focusing on growth.`;
-  else if (warns > 0) summary += `${warns} warning${warns > 1 ? 's' : ''} should be addressed to reach peak performance.`;
-  else summary += `Overall the account is in good health — focus on the suggestions to hit best-practice standards.`;
-
-  return summary;
-}
-
-async function runAudit() {
-  const token      = document.getElementById('token').value.trim();
-  const locationId = document.getElementById('locationId').value.trim();
+function runAudit() {
+  var token = document.getElementById('token').value.trim();
+  var locationId = document.getElementById('locationId').value.trim();
   if (!token || !locationId) { alert('Please enter both your token and Location ID.'); return; }
 
-  document.getElementById('login-wrap').style.display  = 'none';
-  document.getElementById('progress-wrap').style.display = 'block';
-  document.getElementById('dashboard').style.display    = 'none';
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('progress-outer').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
 
-  // Render steps
-  const stepsList = document.getElementById('steps-list');
-  stepsList.innerHTML = STEPS.map((s, i) => `
-    <li class="step" id="step-${s.key}">
-      <span class="step-icon">${i + 1}</span>
-      ${s.label}
-    </li>
-  `).join('');
+  var stepsList = document.getElementById('steps-list');
+  stepsList.innerHTML = STEPS.map(function(s, i) {
+    return '<li class="step" id="step-' + s.key + '"><span class="step-icon">' + (i+1) + '</span>' + s.label + '</li>';
+  }).join('');
 
-  // Animate steps while fetching
-  let stepIdx = 0;
-  const stepTimer = setInterval(() => {
-    if (stepIdx < STEPS.length - 1) {
-      if (stepIdx > 0) {
-        const prev = document.getElementById(`step-${STEPS[stepIdx - 1].key}`);
-        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); prev.querySelector('.step-icon').textContent = '✓'; }
-      }
-      const curr = document.getElementById(`step-${STEPS[stepIdx].key}`);
+  var stepIdx = 0;
+  var stepTimer = setInterval(function() {
+    if (stepIdx > 0) {
+      var prev = document.getElementById('step-' + STEPS[stepIdx-1].key);
+      if (prev) { prev.classList.remove('active'); prev.classList.add('done'); prev.querySelector('.step-icon').textContent = 'v'; }
+    }
+    if (stepIdx < STEPS.length) {
+      var curr = document.getElementById('step-' + STEPS[stepIdx].key);
       if (curr) curr.classList.add('active');
       stepIdx++;
     }
-  }, 900);
+  }, 1200);
 
-  try {
-    const res  = await fetch('/api/audit', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ token, locationId })
-    });
-    const data = await res.json();
+  fetch('/api/audit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: token, locationId: locationId })
+  }).then(function(r) { return r.json(); }).then(function(data) {
     clearInterval(stepTimer);
-
-    // Mark all done
-    STEPS.forEach(s => {
-      const el = document.getElementById(`step-${s.key}`);
-      if (el) { el.classList.remove('active'); el.classList.add('done'); el.querySelector('.step-icon').textContent = '✓'; }
+    STEPS.forEach(function(s) {
+      var el = document.getElementById('step-' + s.key);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); el.querySelector('.step-icon').textContent = 'v'; }
     });
-
     auditData = data;
-    setTimeout(() => renderDashboard(data), 600);
-  } catch (err) {
+    setTimeout(function() { renderDashboard(data); }, 500);
+  }).catch(function(err) {
     clearInterval(stepTimer);
-    alert('Error running audit: ' + err.message);
+    alert('Error: ' + err.message);
     resetAudit();
-  }
+  });
 }
 
 function renderDashboard(data) {
-  document.getElementById('progress-wrap').style.display = 'none';
-  document.getElementById('dashboard').style.display     = 'block';
+  document.getElementById('progress-outer').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
 
-  const s    = data.overallScore;
-  const loc  = data.sections?.settings?.location || {};
-  document.getElementById('loc-name').textContent    = loc.name || 'Sub-Account';
-  document.getElementById('audit-time').textContent  = 'Audit generated: ' + new Date().toLocaleString();
-  document.getElementById('score-big').textContent   = s + '/100';
-  document.getElementById('score-big').className     = 'score-big ' + scoreClass(s);
+  var s = data.overallScore;
+  var loc = (data.sections && data.sections.settings && data.sections.settings.location) || {};
+  document.getElementById('loc-name').textContent = (loc.name || 'Sub-Account') + ' -- Deep Audit';
+  document.getElementById('audit-time').textContent = 'Generated: ' + new Date().toLocaleString();
+  document.getElementById('score-big').textContent = s + '/100';
+  document.getElementById('score-big').className = 'score-big ' + scoreClass(s);
   document.getElementById('score-label').textContent = scoreLabel(s);
-  document.getElementById('expert-summary').textContent = expertSummary(data);
 
-  // Stats row
-  const wf  = data.sections?.workflows?.stats   || {};
-  const cts = data.sections?.contacts?.stats    || {};
-  const pip = data.sections?.pipelines?.stats   || {};
-  const cal = data.sections?.calendars?.stats   || {};
-  const frm = data.sections?.forms?.stats       || {};
+  // Expert summary
+  var sections = data.sections || {};
+  var wf = (sections.workflows && sections.workflows.stats) || {};
+  var ct = (sections.contacts && sections.contacts.stats) || {};
+  var pp = (sections.pipelines && sections.pipelines.stats) || {};
+  var critCount = (data.allIssues || []).filter(function(i) { return i.severity === 'critical'; }).length;
+  document.getElementById('expert-summary').textContent =
+    (wf.active || 0) + ' active workflows, ' + (wf.draft || 0) + ' in draft. ' +
+    (ct.total || 0) + ' contacts. ' +
+    (pp.pipelines || 0) + ' pipeline(s). ' +
+    critCount + ' critical issue(s) require immediate attention.';
+
+  // Stats
   document.getElementById('stats-row').innerHTML = [
-    { num: cts.total     ?? '?', lbl: 'Contacts'    },
-    { num: wf.active     ?? '?', lbl: 'Active Flows' },
-    { num: wf.draft      ?? '?', lbl: 'Draft Flows'  },
-    { num: pip.pipelines ?? '?', lbl: 'Pipelines'    },
-    { num: cal.total     ?? '?', lbl: 'Calendars'    },
-    { num: frm.forms     ?? '?', lbl: 'Forms'        },
-  ].map(x => `<div class="stat-card"><div class="stat-num">${x.num}</div><div class="stat-lbl">${x.lbl}</div></div>`).join('');
-
-  // Issues
-  const issues = data.allIssues || [];
-  document.getElementById('issues-list').innerHTML = issues.length === 0
-    ? '<p style="color:#4ade80;text-align:center;padding:20px">✅ No critical or warning issues found!</p>'
-    : issues.map(issue => `
-        <div class="issue-card ${issue.severity}">
-          <div class="issue-top">
-            <span class="badge ${issue.severity}">${issue.severity}</span>
-            <span class="issue-title">${SECTION_META[issue.section]?.label || issue.section}: ${issue.title}</span>
-          </div>
-          <div class="issue-detail">${issue.detail}</div>
-          <div class="issue-fix">${issue.fix}</div>
-        </div>
-      `).join('');
-
-  // Section cards
-  document.getElementById('sections-grid').innerHTML = Object.entries(data.sections).map(([key, sec]) => {
-    const meta  = SECTION_META[key] || { label: key, icon: '•' };
-    const color = scoreColor(sec.score);
-    return `
-      <div class="section-card">
-        <div class="sc-header">
-          <span class="sc-name">${meta.icon} ${meta.label}</span>
-          <span class="sc-score" style="color:${color}">${sec.score}/100</span>
-        </div>
-        <div class="sc-bar-bg"><div class="sc-bar" style="width:${sec.score}%;background:${color}"></div></div>
-        <div class="sc-expert">${sec.expert}</div>
-      </div>
-    `;
+    { num: ct.total || 0, lbl: 'Contacts' },
+    { num: wf.active || 0, lbl: 'Active Flows' },
+    { num: wf.draft || 0, lbl: 'Draft Flows' },
+    { num: pp.pipelines || 0, lbl: 'Pipelines' },
+    { num: (sections.calendars && sections.calendars.stats && sections.calendars.stats.total) || 0, lbl: 'Calendars' },
+    { num: (sections.forms && sections.forms.stats && sections.forms.stats.forms) || 0, lbl: 'Forms' },
+    { num: (sections.customValues && sections.customValues.stats && sections.customValues.stats.total) || 0, lbl: 'Custom Values' },
+    { num: (sections.customFields && sections.customFields.stats && sections.customFields.stats.total) || 0, lbl: 'Custom Fields' }
+  ].map(function(x) {
+    return '<div class="stat-card"><div class="stat-num">' + x.num + '</div><div class="stat-lbl">' + x.lbl + '</div></div>';
   }).join('');
 
-  // Benchmarks
-  const bmarks = [
-    { label: 'Workflow automation',   val: data.sections.workflows?.score    ?? 0 },
-    { label: 'CRM data quality',      val: data.sections.contacts?.score     ?? 0 },
-    { label: 'Pipeline setup',        val: data.sections.pipelines?.score    ?? 0 },
-    { label: 'Calendar & booking',    val: data.sections.calendars?.score    ?? 0 },
-    { label: 'Forms & surveys',       val: data.sections.forms?.score        ?? 0 },
-    { label: 'Email & SMS settings',  val: data.sections.settings?.score     ?? 0 },
-    { label: 'Funnels & websites',    val: data.sections.funnels?.score      ?? 0 },
-    { label: 'Custom values setup',   val: data.sections.customValues?.score ?? 0 },
-  ];
-  document.getElementById('benchmarks').innerHTML = bmarks.map(b => `
-    <div class="bench-row">
-      <div class="bench-label">${b.label}</div>
-      <div class="bench-bar-bg"><div class="bench-bar" style="width:${b.val}%;background:${scoreColor(b.val)}"></div></div>
-      <div class="bench-val" style="color:${scoreColor(b.val)}">${b.val}%</div>
-    </div>
-  `).join('');
+  // Issues
+  var issues = data.allIssues || [];
+  document.getElementById('issues-list').innerHTML = issues.length === 0
+    ? '<p style="color:#4ade80;padding:16px">No critical or warning issues found.</p>'
+    : issues.map(function(issue) {
+        var meta = SECTION_META[issue.section] || { label: issue.section };
+        return '<div class="issue-card ' + issue.severity + '">' +
+          '<div class="issue-top"><span class="badge ' + issue.severity + '">' + issue.severity + '</span>' +
+          '<span class="issue-title">' + meta.label + ': ' + issue.title + '</span></div>' +
+          '<div class="issue-detail">' + issue.detail + '</div>' +
+          '<div class="issue-fix">' + issue.fix + '</div></div>';
+      }).join('');
+
+  // Deep sections
+  var wrap = document.getElementById('sections-wrap');
+  wrap.innerHTML = '';
+  Object.entries(sections).forEach(function(entry) {
+    var key = entry[0];
+    var sec = entry[1];
+    var meta = SECTION_META[key] || { label: key, icon: '?' };
+    var color = scoreColor(sec.score);
+    var el = document.createElement('div');
+    el.className = 'deep-section';
+    el.innerHTML =
+      '<div class="deep-header" onclick="toggleSection(\'' + key + '\')">' +
+        '<div class="deep-header-left">' +
+          '<div class="deep-icon" style="background:#1e2235;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:' + color + '">' + meta.icon + '</div>' +
+          '<div><div class="deep-name">' + meta.label + '</div>' +
+          '<div class="deep-expert">' + (sec.expert || '') + '</div></div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:16px">' +
+          '<div class="score-bar-wrap" style="width:80px"><div class="score-bar-bg"><div class="score-bar" style="width:' + sec.score + '%;background:' + color + '"></div></div></div>' +
+          '<div class="deep-score" style="color:' + color + '">' + sec.score + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="deep-body" id="body-' + key + '">' + buildSectionBody(key, sec) + '</div>';
+    wrap.appendChild(el);
+  });
+}
+
+function buildSectionBody(key, sec) {
+  var html = '';
+
+  // Section-level issues
+  if (sec.issues && sec.issues.length > 0) {
+    html += '<div class="sub-title">Issues Found</div>';
+    html += '<div class="issues-list">' + sec.issues.map(function(issue) {
+      return '<div class="issue-card ' + issue.severity + '">' +
+        '<div class="issue-top"><span class="badge ' + issue.severity + '">' + issue.severity + '</span>' +
+        '<span class="issue-title">' + issue.title + '</span></div>' +
+        '<div class="issue-detail">' + issue.detail + '</div>' +
+        '<div class="issue-fix">' + issue.fix + '</div></div>';
+    }).join('') + '</div>';
+  }
+
+  // Detail cards
+  var details = sec.details || [];
+  if (details.length === 0) return html;
+
+  html += '<div class="sub-title">' + details.length + ' Item(s) Found</div><div class="detail-grid">';
+
+  details.forEach(function(d) {
+    var statusClass = d.status === 'published' ? 'status-active' : d.status === 'draft' ? 'status-draft' : 'status-unknown';
+    var statusLabel = d.status ? d.status.charAt(0).toUpperCase() + d.status.slice(1) : '';
+
+    html += '<div class="detail-card">';
+    html += '<div class="detail-name">' + escHtml(d.name || 'Unnamed');
+    if (d.status) html += ' <span class="detail-status ' + statusClass + '">' + statusLabel + '</span>';
+    html += '</div>';
+
+    // Meta info
+    var metas = [];
+    if (d.type) metas.push('Type: ' + d.type);
+    if (d.dataType) metas.push('Type: ' + d.dataType);
+    if (d.fields !== undefined) metas.push('Fields: ' + d.fields);
+    if (d.questions !== undefined) metas.push('Questions: ' + d.questions);
+    if (d.stageCount !== undefined) metas.push('Stages: ' + d.stageCount);
+    if (d.opportunityCount !== undefined) metas.push('Opps: ' + d.opportunityCount);
+    if (d.staleCount !== undefined && d.staleCount > 0) metas.push('Stale: ' + d.staleCount);
+    if (d.teamMembers !== undefined) metas.push('Team members: ' + d.teamMembers);
+    if (d.domain) metas.push('Domain: ' + d.domain);
+    if (d.pageCount !== undefined) metas.push('Pages: ' + d.pageCount);
+    if (d.key) metas.push('Key: ' + d.key);
+    if (d.value) metas.push('Value: ' + escHtml(d.value));
+    if (d.email && d.email !== 'none') metas.push('Email: ' + d.email);
+    if (d.phone && d.phone !== 'none') metas.push('Phone: ' + d.phone);
+    if (d.timezone) metas.push('Timezone: ' + d.timezone);
+    if (metas.length > 0) html += '<div class="detail-meta">' + metas.join(' | ') + '</div>';
+
+    // Tags
+    if (d.tags && d.tags.length > 0) {
+      html += '<div style="margin-bottom:4px">' + d.tags.map(function(t) { return '<span class="tag-pill">' + escHtml(t) + '</span>'; }).join('') + '</div>';
+    }
+
+    // Stages
+    if (d.stages && d.stages.length > 0) {
+      html += '<div class="detail-meta">Stages: ' + d.stages.map(function(s) { return escHtml(s); }).join(' > ') + '</div>';
+    }
+
+    // Issues
+    if (d.issues && d.issues.length > 0) {
+      d.issues.forEach(function(i) { html += '<div class="detail-issue">! ' + escHtml(i) + '</div>'; });
+    }
+
+    // Notes
+    if (d.notes && d.notes.length > 0) {
+      d.notes.forEach(function(n) { html += '<div class="detail-note">i ' + escHtml(n) + '</div>'; });
+    }
+
+    html += '</div>';
+  });
+
+  html += '</div>';
+  return html;
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleSection(key) {
+  var body = document.getElementById('body-' + key);
+  if (body) body.classList.toggle('open');
 }
 
 function resetAudit() {
-  document.getElementById('login-wrap').style.display    = 'flex';
-  document.getElementById('progress-wrap').style.display = 'none';
-  document.getElementById('dashboard').style.display     = 'none';
+  document.getElementById('login-wrap').style.display = 'flex';
+  document.getElementById('progress-outer').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
 }
 
 function exportPDF() {
   if (!auditData) return;
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const pw = doc.internal.pageSize.getWidth();
-  let y = 20;
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  var pw = doc.internal.pageSize.getWidth();
+  var y = 20;
+  var sections = auditData.sections || {};
+  var loc = (sections.settings && sections.settings.location) || {};
 
-  const addPage = () => { doc.addPage(); y = 20; };
-  const checkY  = (h) => { if (y + h > 270) addPage(); };
-  const text    = (t, x, size, style, color) => {
-    doc.setFontSize(size || 11);
-    doc.setFont('helvetica', style || 'normal');
-    doc.setTextColor(...(color || [30, 30, 30]));
+  function newPage() { doc.addPage(); y = 20; }
+  function checkY(h) { if (y + h > 270) newPage(); }
+  function txt(t, x, size, style, rgb) {
+    doc.setFontSize(size || 10); doc.setFont('helvetica', style || 'normal');
+    doc.setTextColor.apply(doc, rgb || [226, 232, 240]);
     doc.text(String(t), x, y);
-  };
+  }
 
   // Cover
-  doc.setFillColor(15, 17, 23);
-  doc.rect(0, 0, pw, 297, 'F');
-  y = 70;
-  text('GHL Expert Audit Report', pw / 2, 24, 'bold', [200, 184, 255]);
-  doc.setTextColor(200, 184, 255);
-  doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
-  doc.text('GHL Expert Audit Report', pw / 2, y, { align: 'center' });
-  y += 12;
-  doc.setFontSize(13); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
-  const loc = auditData.sections?.settings?.location || {};
-  doc.text(loc.name || 'Sub-Account', pw / 2, y, { align: 'center' });
-  y += 8;
-  doc.text(new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), pw / 2, y, { align: 'center' });
-  y += 20;
-  doc.setFontSize(60); doc.setFont('helvetica', 'bold');
-  const sc = auditData.overallScore;
-  doc.setTextColor(sc >= 75 ? 74 : sc >= 45 ? 251 : 248, sc >= 75 ? 222 : sc >= 45 ? 191 : 113, sc >= 75 ? 128 : sc >= 45 ? 36 : 113);
-  doc.text(`${sc}/100`, pw / 2, y, { align: 'center' });
-  y += 12;
-  doc.setFontSize(14); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
-  doc.text(scoreLabel(sc).replace(/🏆|✅|⚠️|🚨/g, '').trim(), pw / 2, y, { align: 'center' });
+  doc.setFillColor(15,17,23); doc.rect(0,0,pw,297,'F');
+  y = 80;
+  doc.setFontSize(22); doc.setFont('helvetica','bold'); doc.setTextColor(124,106,245);
+  doc.text('GHL Deep Expert Audit', pw/2, y, {align:'center'}); y += 10;
+  doc.setFontSize(13); doc.setFont('helvetica','normal'); doc.setTextColor(136,146,164);
+  doc.text(loc.name || 'Sub-Account', pw/2, y, {align:'center'}); y += 7;
+  doc.text(new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}), pw/2, y, {align:'center'}); y += 20;
+  var sc = auditData.overallScore;
+  var rgb = sc >= 75 ? [74,222,128] : sc >= 45 ? [251,191,36] : [248,113,113];
+  doc.setFontSize(56); doc.setFont('helvetica','bold'); doc.setTextColor.apply(doc, rgb);
+  doc.text(sc + '/100', pw/2, y, {align:'center'}); y += 10;
+  doc.setFontSize(14); doc.setFont('helvetica','normal'); doc.setTextColor(136,146,164);
+  doc.text(scoreLabel(sc), pw/2, y, {align:'center'});
 
-  // Summary page
-  doc.addPage(); y = 20;
-  doc.setFillColor(26, 29, 39); doc.rect(0, 0, pw, 297, 'F');
-  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
-  doc.text('Expert Analysis', 15, y); y += 10;
-  doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
-  const summaryLines = doc.splitTextToSize(expertSummary(auditData), pw - 30);
-  doc.text(summaryLines, 15, y); y += summaryLines.length * 5 + 10;
+  // For each section
+  Object.entries(sections).forEach(function(entry) {
+    var key = entry[0]; var sec = entry[1];
+    var meta = SECTION_META[key] || { label: key };
+    doc.addPage(); y = 20;
+    doc.setFillColor(26,29,39); doc.rect(0,0,pw,297,'F');
+    var sRgb = sec.score >= 75 ? [74,222,128] : sec.score >= 45 ? [251,191,36] : [248,113,113];
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(200,184,255);
+    doc.text(meta.label, 15, y); y += 6;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor.apply(doc, sRgb);
+    doc.text('Score: ' + sec.score + '/100', 15, y); y += 5;
+    doc.setTextColor(136,146,164);
+    var expertLines = doc.splitTextToSize(sec.expert || '', pw - 30);
+    doc.text(expertLines, 15, y); y += expertLines.length * 4 + 6;
 
-  // Issues
-  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
-  doc.text('Priority Issues', 15, y); y += 8;
-  for (const issue of auditData.allIssues || []) {
-    checkY(28);
-    const color = issue.severity === 'critical' ? [248, 113, 113] : issue.severity === 'warning' ? [251, 191, 36] : [96, 165, 250];
-    doc.setFillColor(...color);
-    doc.rect(15, y - 4, 3, 18, 'F');
-    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...color);
-    doc.text(issue.severity.toUpperCase(), 21, y);
-    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(226, 232, 240);
-    doc.text(`${SECTION_META[issue.section]?.label || issue.section}: ${issue.title}`, 21, y + 5);
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
-    const detLines = doc.splitTextToSize(issue.detail, pw - 36);
-    doc.text(detLines, 21, y + 10);
-    doc.setTextColor(167, 139, 250);
-    const fixLines = doc.splitTextToSize('Fix: ' + issue.fix, pw - 36);
-    doc.text(fixLines, 21, y + 10 + detLines.length * 4);
-    y += 10 + detLines.length * 4 + fixLines.length * 4 + 6;
-  }
+    // Issues
+    (sec.issues || []).forEach(function(issue) {
+      checkY(22);
+      var iRgb = issue.severity === 'critical' ? [248,113,113] : issue.severity === 'warning' ? [251,191,36] : [96,165,250];
+      doc.setFillColor.apply(doc, iRgb); doc.rect(15, y-3, 2, 15, 'F');
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor.apply(doc, iRgb);
+      doc.text(issue.severity.toUpperCase(), 20, y); y += 4;
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(226,232,240);
+      doc.text(issue.title, 20, y); y += 4;
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(136,146,164);
+      var dLines = doc.splitTextToSize(issue.detail || '', pw - 35);
+      doc.text(dLines, 20, y); y += dLines.length * 3 + 1;
+      doc.setTextColor(167,139,250);
+      var fLines = doc.splitTextToSize('Fix: ' + (issue.fix || ''), pw - 35);
+      doc.text(fLines, 20, y); y += fLines.length * 3 + 4;
+    });
 
-  // Section scores
-  doc.addPage(); y = 20;
-  doc.setFillColor(26, 29, 39); doc.rect(0, 0, pw, 297, 'F');
-  doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 184, 255);
-  doc.text('Section Analysis', 15, y); y += 10;
-  for (const [key, sec] of Object.entries(auditData.sections || {})) {
-    checkY(22);
-    const meta  = SECTION_META[key] || { label: key };
-    const color = sec.score >= 75 ? [74, 222, 128] : sec.score >= 45 ? [251, 191, 36] : [248, 113, 113];
-    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(226, 232, 240);
-    doc.text(meta.label, 15, y);
-    doc.setTextColor(...color);
-    doc.text(`${sec.score}/100`, pw - 15, y, { align: 'right' });
-    y += 5;
-    doc.setFillColor(30, 34, 53); doc.rect(15, y, pw - 30, 4, 'F');
-    doc.setFillColor(...color); doc.rect(15, y, (pw - 30) * (sec.score / 100), 4, 'F');
-    y += 7;
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(136, 146, 164);
-    const expertLines = doc.splitTextToSize(sec.expert || '', pw - 30);
-    doc.text(expertLines, 15, y);
-    y += expertLines.length * 4 + 6;
-  }
+    // Detail items
+    (sec.details || []).forEach(function(d) {
+      checkY(16);
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(200,184,255);
+      doc.text((d.name || 'Unnamed') + (d.status ? ' [' + d.status + ']' : ''), 15, y); y += 4;
+      var metas = [];
+      if (d.type) metas.push('Type: ' + d.type);
+      if (d.dataType) metas.push('Type: ' + d.dataType);
+      if (d.stageCount !== undefined) metas.push('Stages: ' + d.stageCount);
+      if (d.opportunityCount !== undefined) metas.push('Opps: ' + d.opportunityCount);
+      if (d.teamMembers !== undefined) metas.push('Team: ' + d.teamMembers);
+      if (d.fields !== undefined) metas.push('Fields: ' + d.fields);
+      if (d.domain) metas.push('Domain: ' + d.domain);
+      if (d.value) metas.push('Value: ' + String(d.value).substring(0, 40));
+      if (metas.length > 0) {
+        doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(136,146,164);
+        doc.text(metas.join(' | '), 15, y); y += 4;
+      }
+      (d.issues || []).forEach(function(i) {
+        checkY(8);
+        doc.setFontSize(8); doc.setTextColor(248,113,113);
+        var il = doc.splitTextToSize('! ' + i, pw - 25);
+        doc.text(il, 18, y); y += il.length * 3 + 1;
+      });
+      (d.notes || []).forEach(function(n) {
+        checkY(8);
+        doc.setFontSize(8); doc.setTextColor(96,165,250);
+        var nl = doc.splitTextToSize('i ' + n, pw - 25);
+        doc.text(nl, 18, y); y += nl.length * 3 + 1;
+      });
+      y += 3;
+    });
+  });
 
-  doc.save(`GHL-Expert-Audit-${(loc.name || 'Account').replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save('GHL-Deep-Audit-' + (loc.name || 'Account').replace(/\s+/g,'-') + '-' + new Date().toISOString().slice(0,10) + '.pdf');
 }
 </script>
 </body>
