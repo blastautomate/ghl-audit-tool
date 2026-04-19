@@ -2,25 +2,44 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const https = require('https');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const BASE = 'https://services.leadconnectorhq.com';
-
-async function ghlGet(token, endpoint) {
-  const url = BASE + endpoint;
-  const res = await fetch(url, {
-    headers: {
-      'Authorization': token,
-      'Version': '2021-07-28',
-      'Content-Type': 'application/json'
-    }
+function ghlGet(token, endpoint) {
+  return new Promise(function(resolve, reject) {
+    const options = {
+      hostname: 'services.leadconnectorhq.com',
+      path: endpoint,
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Version': '2021-07-28',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    };
+    const req = https.request(options, function(res) {
+      let body = '';
+      res.on('data', function(chunk) { body += chunk; });
+      res.on('end', function() {
+        if (res.statusCode >= 400) {
+          reject(new Error('HTTP ' + res.statusCode + ' on ' + endpoint));
+          return;
+        }
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          reject(new Error('Invalid JSON from ' + endpoint));
+        }
+      });
+    });
+    req.on('error', function(e) { reject(e); });
+    req.end();
   });
-  if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + endpoint);
-  return res.json();
 }
 
 function analyzeWorkflows(workflows) {
@@ -127,7 +146,7 @@ function analyzePipelines(pipelines, opportunities) {
   if (stale.length > 0) {
     issues.push({ severity: 'warning', title: stale.length + ' stale opportunities (30+ days without update)', detail: 'Opportunities sitting unchanged for over 30 days are likely lost deals clogging your pipeline.', fix: 'Review stale opportunities monthly -- close lost deals, re-engage warm ones, delete dead ones.' });
   }
-  issues.push({ severity: 'suggestion', title: 'Verify stage-change automations are connected', detail: 'Pipelines are most powerful when workflow automations fire on stage changes.', fix: 'Add workflow triggers for each key pipeline stage: Opportunity Stage Changed then relevant automation.' });
+  issues.push({ severity: 'suggestion', title: 'Verify stage-change automations are connected', detail: 'Pipelines are most powerful when workflow automations fire on stage changes.', fix: 'Add workflow triggers for each key pipeline stage.' });
 
   const score = Math.max(0, 100 - issues.filter(i => i.severity === 'critical').length * 40 - issues.filter(i => i.severity === 'warning').length * 15 - issues.filter(i => i.severity === 'suggestion').length * 5);
   const expert = pipelines.length + ' pipeline(s) with ' + opportunities.length + ' total opportunities. ' + (stale.length > 0 ? stale.length + ' stale opportunities need review.' : 'No stale opportunities detected.');
@@ -210,14 +229,12 @@ function buildOverallScore(sections) {
 }
 
 function buildAllIssues(sections) {
+  const order = { critical: 0, warning: 1, suggestion: 2 };
   return Object.entries(sections).flatMap(function(entry) {
-    const section = entry[0];
-    const data = entry[1];
-    return (data.issues || []).map(function(issue) {
-      return Object.assign({}, issue, { section: section });
+    return (entry[1].issues || []).map(function(issue) {
+      return Object.assign({}, issue, { section: entry[0] });
     });
   }).sort(function(a, b) {
-    const order = { critical: 0, warning: 1, suggestion: 2 };
     return (order[a.severity] || 3) - (order[b.severity] || 3);
   });
 }
@@ -306,9 +323,9 @@ app.post('/api/audit', async function(req, res) {
     if (funnels.length === 0) {
       issues.push({ severity: 'warning', title: 'No funnels or websites found', detail: 'No funnels or websites are set up. Lead capture requires at minimum a landing page and a thank-you page.', fix: 'Build a lead capture funnel: opt-in page then thank you page then trigger a nurture workflow.' });
     } else {
-      const unpublished = funnels.filter(f => f.type === 'funnel' && !f.domainConfig);
-      if (unpublished.length > 0) {
-        issues.push({ severity: 'warning', title: unpublished.length + ' funnel(s) may not have a custom domain', detail: 'Funnels without a custom domain use the default GHL URL which looks unprofessional.', fix: 'Connect a custom domain to each active funnel under Funnels > Settings > Domain.' });
+      const noDomain = funnels.filter(f => f.type === 'funnel' && !f.domainConfig);
+      if (noDomain.length > 0) {
+        issues.push({ severity: 'warning', title: noDomain.length + ' funnel(s) may not have a custom domain', detail: 'Funnels without a custom domain use the default GHL URL which looks unprofessional.', fix: 'Connect a custom domain to each active funnel under Funnels > Settings > Domain.' });
       }
     }
     const score = funnels.length === 0 ? 30 : Math.max(50, 100 - issues.filter(i => i.severity === 'warning').length * 15);
